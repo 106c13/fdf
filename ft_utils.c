@@ -1,33 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fdf.h                                              :+:      :+:    :+:   */
+/*   ft_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/07 14:07:55 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/08 17:51:41 by haaghaja         ###   ########.fr       */
+/*   Created: 2025/04/08 14:35:56 by haaghaja          #+#    #+#             */
+/*   Updated: 2025/04/08 14:49:12 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FDF_H
-# define FDF_H
+#include "fdf.h"
 
-# include <stdlib.h>
-# include <fcntl.h>
-# include "get_next_line.h"
-// TODO: remove this V
-#include "ft_printf.h"
-
-typedef struct s_grid
+int	ft_isnum(char *str)
 {
-	int	height;
-	int	color;
-	char	end;
-	struct s_grid	*next;
-} t_grid;
-
-char	**ft_split(char *str, char sep);
-
-
-#endif
+	if (!(*str) || !(*(str + 1)))
+		return (NULL);
+	if (*str == '-')
+		str++;
+	while (*str)
+	{
+		if (*str < '0' || *str > '9')
+			return (0);
+		str++;
+	}
+	return (1);
+}
