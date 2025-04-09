@@ -19,28 +19,46 @@ int	error(char *msg, int out)
 	return (out);
 }
 
+int	is_valid_symbol(char c, char *s)
+{
+	while (*s)
+	{
+		if (*s == c)
+			return (1);
+		s++;
+	}
+	return (0);
+}									
+
 int	count_words(char *str)
 {
 	int	count;
 
 	count = 0;
-	while (*str)
+	while (*str && *str != '\n')
 	{
-		if (*str != ' ' && (*(str + 1) == ' ' || *(str + 1) == '\0')
+		if (!is_valid_symbol(*str, "0123456789xABCDEFabcdef,- "))
+			return (-1);
+		if (*str != ' ' && (*(str + 1) == ' ' || *(str + 1) == '\0'))
 			count++;
+		str++;
 	}
 	return (count);
+}
 
+// TODO: Fix this function
 int	count_size(int fd)
 {
 	int	size;
 	int	height;
 	char	*line;
 
-	line = get_next_line(fd)
+	line = get_next_line(fd);
 	if (!line)
 		return (-1);
 	height = count_words(line);
+	if (height == -1)
+		return (-1);
 	size = height;
 	while (line)
 	{
@@ -72,15 +90,13 @@ void	parse_line(char *line)
 		points++;
 	}
 }
-
-void	parse_file(int fd)
+/*
+t_grid	*parse_file(int fd)
 {
-	char	*line;
-	t_grid	*grid;
+	char	*line;	
 
 	ft_printf(" ");	
 	line = get_next_line(fd);
-	*grid = create_point();
 	while (line)
 	{
 		parse_line(line);
@@ -89,20 +105,21 @@ void	parse_file(int fd)
 	}
 	return (grid);
 }
-
+*/
 int	main(int argc, char **argv)
 {
 	int	fd;
-	t_grid	*grid;
+	//t_grid	*grid;
 
 	if (argc == 2)
 	{
 		fd = open(argv[1], O_RDONLY);
 		if (fd == -1)
-			return (error("File not exists\n"));
-		parse_file(fd);
-		if (!grid)
-			return (0);
+			return (error("File not exists\n", 0));
+		ft_printf("%d\n", count_size(fd));
+		//parse_file(fd);
+		//if (!grid)
+		//	return (0);
 	}
 	return (0);
 }
