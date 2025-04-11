@@ -12,114 +12,108 @@
 
 #include "fdf.h"
 
-int	error(char *msg, int out)
+int	ft_htod(char **str)
 {
-	while (*msg)
-		write(1, msg++, 1);
-	return (out);
+	int	num;
+
+	num = 0;
+	(*str) += 3;
+	while (**str && **str != ' ' && **str != '\n')
+	{
+		if (**str >= '0' && **str <= '9')
+			num = num * 16 + **str - '0';
+		else if (**str >= 'a' && **str <= 'f')
+			num = num * 16 + **str - 'a' + 10;
+		else if (**str >= 'A' && **str <= 'F')
+			num = num * 16 + **str - 'A' + 10;
+		(*str)++;
+	}
+	return (num);
 }
 
-int	is_valid_symbol(char c, char *s)
+t_grid	*parse_line(char *line, t_grid *grid)
 {
-	while (*s)
-	{
-		if (*s == c)
-			return (1);
-		s++;
-	}
-	return (0);
-}									
+	int	num;
+	int	sign;
+	int	i;
 
-int	count_words(char *str)
-{
-	int	count;
-
-	count = 0;
-	while (*str && *str != '\n')
+	i = 0;
+	while (*line && *line != '\n')
 	{
-		if (!is_valid_symbol(*str, "0123456789xABCDEFabcdef,- "))
-			return (-1);
-		if (*str != ' ' && (*(str + 1) == ' ' || *(str + 1) == '\0'))
-			count++;
-		str++;
+		num = 0;
+		sign = 1;
+		if (*line != ' ')
+		{
+			if (*line == '-')
+			{
+				sign = -1;
+				line++;
+			}
+			while (*line >= '0' && *line <= '9')
+			{
+				num = num * 10 + *line - 48;
+				line++;			
+			}
+			grid[i].height = num * sign;
+			if (*line == ',')
+				grid[i].color = ft_htod(&line);
+			else
+				grid[i].color = 16777215;
+			if (i > 0)
+				grid[i - 1].next = &grid[i];
+			i++;
+		}
+		line++;
 	}
-	return (count);
+	grid[i - 1].next = &grid[i];
+	return (&grid[i]);
 }
 
-// TODO: Fix this function
-int	count_size(int fd)
+void	parse_file(int fd, t_grid *grid)
 {
-	int	size;
-	int	height;
 	char	*line;
 
 	line = get_next_line(fd);
-	if (!line)
-		return (-1);
-	height = count_words(line);
-	if (height == -1)
-		return (-1);
-	size = height;
 	while (line)
 	{
-		free(line);
-		line = get_next_line(fd);
-		if (!line)
-			break ;
-		if (height != count_words(line))
-			return (error("Heights aren't equal\n", -1));
-		size += height;
-	}
-	return (size);
-}
-			
-
-	
-	
-
-
-void	parse_line(char *line)
-{
-	char	**points;
-	//t_grin	point;
-
-	points = ft_split(line, ' ');
-	while (*points)
-	{
-		ft_printf("%s ", *points);
-		points++;
-	}
-}
-/*
-t_grid	*parse_file(int fd)
-{
-	char	*line;	
-
-	ft_printf(" ");	
-	line = get_next_line(fd);
-	while (line)
-	{
-		parse_line(line);
+		grid = parse_line(line, grid); 
 		free(line);
 		line = get_next_line(fd);
 	}
+	(*(grid - 1)).next = NULL;
+}
+
+t_grid	*create_grid(char *fname)
+{
+	int	size;
+	int	fd;
+	t_grid	*grid;
+
+	
+	fd = open(fname, O_RDONLY);
+	size = get_grid_size(fd);
+	ft_printf("SIZE: %d\n", size);
+	close(fd);
+	if (size < 1)
+		return (NULL);
+	grid = malloc(sizeof(t_grid) * size);
+	if (!grid)
+		return (error_ptr("Can't allocate memory\n", NULL));
+	fd = open(fname, O_RDONLY);
+	parse_file(fd, grid);
 	return (grid);
 }
-*/
+
+
 int	main(int argc, char **argv)
 {
-	int	fd;
-	//t_grid	*grid;
+	t_grid	*grid;
 
 	if (argc == 2)
 	{
-		fd = open(argv[1], O_RDONLY);
-		if (fd == -1)
-			return (error("File not exists\n", 0));
-		ft_printf("%d\n", count_size(fd));
-		//parse_file(fd);
-		//if (!grid)
-		//	return (0);
+		grid = create_grid(argv[1]);
+		if (grid)
+			ft_printf("%d %x\n", grid->height, grid->color);
 	}
 	return (0);
 }

@@ -15,6 +15,7 @@
 
 # include <stdlib.h>
 # include <fcntl.h>
+# include <limits.h>
 # include "get_next_line.h"
 // TODO: remove this V
 #include "ft_printf.h"
@@ -27,7 +28,18 @@ typedef struct s_grid
 	struct s_grid	*next;
 } t_grid;
 
+
+// ft_splic.c
 char	**ft_split(char *str, char sep);
 
+// validator.c
+int	get_grid_size(int fd);
+
+// main.c
+int	error(char *str, int out);
+
+// error_handlers.c
+void	*error_ptr(char *msg, void *ptr);
+int	error(char *msg, int error_code);
 
 #endif
