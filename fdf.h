@@ -6,7 +6,7 @@
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 14:07:55 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/08 17:51:41 by haaghaja         ###   ########.fr       */
+/*   Updated: 2025/04/12 14:57:25 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,12 @@ char	**ft_split(char *str, char sep);
 
 // validator.c
 int	get_grid_size(int fd);
+
+// parser.c
+t_grid	*create_grid(char *fname);
+
+// utils.c
+int	ft_htod(char **str);
 
 // main.c
 int	error(char *str, int out);

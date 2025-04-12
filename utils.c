@@ -1,28 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_utils.c                                         :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 14:35:56 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/08 14:49:12 by haaghaja         ###   ########.fr       */
+/*   Updated: 2025/04/12 14:59:21 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-int	ft_isnum(char *str)
+int	ft_htod(char **str)
 {
-	if (!(*str) || !(*(str + 1)))
-		return (NULL);
-	if (*str == '-')
-		str++;
-	while (*str)
+	int	num;
+
+	num = 0;
+	(*str) += 3;
+	while (**str && **str != ' ' && **str != '\n')
 	{
-		if (*str < '0' || *str > '9')
-			return (0);
-		str++;
+		if (**str >= '0' && **str <= '9')
+			num = num * 16 + **str - '0';
+		else if (**str >= 'a' && **str <= 'f')
+			num = num * 16 + **str - 'a' + 10;
+		else if (**str >= 'A' && **str <= 'F')
+			num = num * 16 + **str - 'A' + 10;
+		(*str)++;
 	}
-	return (1);
+	return (num);
 }
