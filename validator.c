@@ -22,7 +22,7 @@ int	is_valid_symbol(char c, char *s)
 	}
 	return (0);
 }
-
+// TODO: Test this function
 int	is_color(char **str)
 {
 	int	i;
@@ -34,10 +34,20 @@ int	is_color(char **str)
 	*str += 2;
 	while (i < 6)
 	{
+		if (*(*str + i) == ' ' || *(*str + i) == '\n' || *(*str + i) == '\0')
+		{
+		//	ft_printf("4444444444\n");
+			break ;
+		}
 		if (!is_valid_symbol(*(*str + i), "0123456789ABCDEFabcdef"))
+		{
+		//	ft_printf("5555555555555555\n");
 			return (0);
+		}
 		i++;
 	}
+	if (i == 0)
+		return (0);
 	*str += i;
 	if (**str != ' ' && **str != '\n' && **str != '\0')
 		return (0);
@@ -56,17 +66,26 @@ int	is_valid(char **str)
 		(*str)++;
 	}
 	if (!is_valid_symbol(**str, "0123456789"))
+	{
+	//	ft_printf("111111111\n");
 		return (0);
+	}
 	num = 0;
 	while (**str && **str != ',' && **str != '\n' && **str != ' ')
 	{
 		if (!is_valid_symbol(**str, "0123456789"))
+		{
+		//	ft_printf("222222222\n");
 			return (0);
+		}
 		num = num * 10 + (**str - '0');
 		(*str)++;
 	}
 	if (sign * num > INT_MAX || sign * num < INT_MIN)
+	{
+	//	ft_printf("3333333333\n");
 		return (0);
+	}
 	if (**str == ',')
 		return (is_color(str));
 	return (1);
@@ -110,7 +129,7 @@ int	get_grid_size(int fd)
 		if (size == 0)
 			width = count_words(line);
 		else if (width != count_words(line))
-			return (error("File is invalid\n", -1));
+			return (error("W doesn't match\n", -1));
 		if (width <= 0)
 			return (error("File is invalid\n", -1));
 		size += width;

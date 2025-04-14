@@ -12,13 +12,13 @@
 
 #include "fdf.h"
 
-t_grid	*parse_line(char *line, t_grid *grid)
+void	parse_line(char *line, t_grid *grid, int *i)
 {
 	int	num;
 	int	sign;
-	int	i;
+	int	width;
 
-	i = 0;
+	width = 0;
 	while (*line && *line != '\n')
 	{
 		num = 0;
@@ -35,51 +35,54 @@ t_grid	*parse_line(char *line, t_grid *grid)
 				num = num * 10 + *line - 48;
 				line++;
 			}
-			grid[i].height = num * sign;
+			grid->values[*i] = num * sign;
 			if (*line == ',')
-				grid[i].color = ft_htod(&line);
+				grid->colors[*i] = ft_htod(&line);
 			else
-				grid[i].color = 16777215;
-			if (i > 0)
-				grid[i - 1].next = &grid[i];
-			i++;
+				grid->colors[*i] = 16777215;
+			(*i)++;
 		}
+		width++;
 		line++;
 	}
-	grid[i - 1].next = &grid[i];
-	return (&grid[i]);
+	grid->width = width;
 }
 
 void	parse_file(int fd, t_grid *grid)
 {
 	char	*line;
+	int	height;
+	int	i;
 
 	line = get_next_line(fd);
+	height = 0;
+	i = 0;
 	while (line)
 	{
-		grid = parse_line(line, grid);
+		height++;
+		parse_line(line, grid, &i);
 		free(line);
 		line = get_next_line(fd);
 	}
-	(*(grid - 1)).next = NULL;
+	grid->height = height;
 }
 
-t_grid	*create_grid(char *fname)
+int	create_grid(char *fname, t_grid *grid)
 {
 	int		size;
 	int		fd;
-	t_grid	*grid;
 
 	fd = open(fname, O_RDONLY);
 	size = get_grid_size(fd);
-	ft_printf("SIZE: %d\n", size);
 	close(fd);
 	if (size < 1)
-		return (NULL);
-	grid = malloc(sizeof(t_grid) * size);
-	if (!grid)
-		return (error_ptr("Can't allocate memory\n", NULL));
+		return (0);
+	grid->values = (int *)malloc(sizeof(int) * size);
+	grid->colors = (int *)malloc(sizeof(int) * size);
+	if (!grid->values || !grid->colors)
+		return (error("Can't allocate memory\n", 0));
 	fd = open(fname, O_RDONLY);
 	parse_file(fd, grid);
-	return (grid);
+	grid->size = size;
+	return (1);
 }
