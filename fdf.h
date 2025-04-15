@@ -13,9 +13,13 @@
 #ifndef FDF_H
 # define FDF_H
 
+
+# define PI 3.14
+
 # include <stdlib.h>
 # include <fcntl.h>
 # include <limits.h>
+# include <math.h>
 # include "get_next_line.h"
 #include "mlx/mlx.h"
 // TODO: remove this V
@@ -23,18 +27,14 @@
 
 typedef struct s_grid
 {
+	void	*mlx;
+	void	*win;
 	int	width;
 	int	height;
 	int	size;
 	int	*values;
 	int	*colors;
-	struct s_grid	*next;
 } t_grid;
-
-typedef struct	s_vars {
-	void	*mlx;
-	void	*win;
-}				t_vars;
 
 typedef struct	s_data {
 	void	*img;
@@ -54,7 +54,7 @@ int	get_grid_size(int fd);
 int	create_grid(char *fnamem, t_grid *grid);
 
 // map_renderer.c
-void	draw_map(t_grid *grid, t_vars *vars);
+void	draw_map(t_grid *grid, double angle);
 
 // utils.c
 int	ft_htod(char **str);

@@ -21,34 +21,44 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 }
 
 
-int	event_handler(int keycode, t_vars *vars)
+int	event_handler(int keycode, t_grid *grid)
 {
+	static double angle;	
 	t_data	img;
 
 	ft_printf("KEYCODE: %d\n", keycode);
 	if (keycode == 65307)
 	{
-		mlx_destroy_window(vars->mlx, vars->win);
+		mlx_destroy_window(grid->mlx, grid->win);
 		exit(0);
 	}
+	else if (keycode == 65363)
+		angle += 0.05;
+	else if (keycode == 65361)
+		angle -= 0.05;
+	if (angle > 2 * PI)
+		angle = 0;
+	else if (angle < 0)
+		angle = 2 * PI;
+	draw_map(grid, angle);
 }
 
 int	main(int argc, char **argv)
 {
 	t_grid	grid;
-	t_vars	vars;
-	int	width = 500;
-	int	height = 500;
+	int	width = 700;
+	int	height = 700;
 
 	if (argc == 2)
 	{
 		if (!create_grid(argv[1], &grid))
 			return (0);
-		vars.mlx = mlx_init();
-		vars.win = mlx_new_window(vars.mlx, width, height, "Hello world!");
-		mlx_hook(vars.win, 2, 1L<<0, event_handler, &vars);
-		draw_map(&grid, &vars);
-		mlx_loop(vars.mlx);
+		ft_printf("W: %d H: %d\n", grid.width, grid.height);
+		grid.mlx = mlx_init();
+		grid.win = mlx_new_window(grid.mlx, width, height, "Hello world!");
+		mlx_hook(grid.win, 2, 1L<<0, event_handler, &grid);
+		draw_map(&grid, 0);
+		mlx_loop(grid.mlx);
 	}
 	return (0);
 }
