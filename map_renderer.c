@@ -20,11 +20,11 @@ void	draw_map(t_grid *grid, double angle)
 	s = 0;
 	printf("%f %f\n", sin(angle), cos(angle));
 	//my_mlx_pixel_put(&img, 0, 0, 0xffff00);
-	while (i < grid->size)
+	while (i < 0)
 	{
 		my_mlx_pixel_put(&img, gw * s + x, gw * s + y, grid->colors[i]);
 		j = 0; // j is 1, cuz we already draw x y, so we dont need to draw x+0 y+0 again
-		while (j < gw)
+		while (j < 0)
 		{
 			if ((i + 1) % grid->width != 0)	
 				my_mlx_pixel_put(&img, gw * s + x + j * cos(angle), gw * s + y + sin(angle) * j, grid->colors[i]);
@@ -37,9 +37,22 @@ void	draw_map(t_grid *grid, double angle)
 		if (i % grid->width == 0)
 		{
 			s = 0;
-			x -= gw;
-			y += gw;
+			x -= gw * cos(angle);
+			y += gw * sin(angle);
 		}
 	}
+	x = 350;
+	y = 350;
+	my_mlx_pixel_put(&img, x, y, 0xffffff);
+	// Draw a line between dots
+	my_mlx_pixel_put(&img, x + 75 * cos(angle + PI), y + 75 * sin(angle), 0xffffff);	
+	my_mlx_pixel_put(&img, x + 75 * cos(angle), y + 75 * sin(angle + PI), 0xff0000);
+	my_mlx_pixel_put(&img, x + 75 * sin(angle + PI), y + 75 * cos(angle + PI), 0x0000ff);
+	my_mlx_pixel_put(&img, x + 75 * sin(angle), y + 75 * cos(angle), 0x00ff00);
 	mlx_put_image_to_window(grid->mlx, grid->win, img.img, 0, 0);
+}
+
+void	draw_line(int x1, int y1, int x2, int y2, t_data *img)
+{
+	
 }
