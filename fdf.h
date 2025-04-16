@@ -6,7 +6,7 @@
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 14:07:55 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/12 14:57:25 by haaghaja         ###   ########.fr       */
+/*   Updated: 2025/04/16 16:56:33 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	get_grid_size(int fd);
 int	create_grid(char *fnamem, t_grid *grid);
 
 // map_renderer.c
-void	draw_map(t_grid *grid, double angle);
+void	draw_map(t_grid *grid, double angle, int zoom);
 
 // utils.c
 int	ft_htod(char **str);

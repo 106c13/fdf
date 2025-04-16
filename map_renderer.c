@@ -1,11 +1,43 @@
 #include "fdf.h"
 #include <stdio.h>
 
-void	draw_map(t_grid *grid, double angle)
+void	draw_line(int x0, int y0, int x1, int y1, t_data *img)
+{
+	int dx;
+	int dy;
+	int err;
+
+	dx = abs(x1 - x0);
+	dy = abs(y1 - y0);
+	err = dx - dy;
+	while (x0 != x1 || y0 != y1)
+	{
+		my_mlx_pixel_put(img, x0, y0, 0xffffff);
+		if (err > -dy)
+		{
+			err -= dy;
+			if (x0 < x1)
+				x0++;
+			else
+				x0--;
+		}
+		if (err < dx)
+		{
+			err += dx;
+			if (y0 < y1)
+				y0++;
+			else
+				y0--;
+		}
+	}
+}
+
+void	draw_map(t_grid *grid, double angle, int zoom)
 {
 	t_data	img;
 	int	i;
 	int	j;
+	int	x0, x1, y0, y1;
 	int	s;
 	int	x;
 	int	y;
@@ -45,14 +77,30 @@ void	draw_map(t_grid *grid, double angle)
 	y = 350;
 	my_mlx_pixel_put(&img, x, y, 0xffffff);
 	// Draw a line between dots
-	my_mlx_pixel_put(&img, x + 75 * cos(angle + PI), y + 75 * sin(angle), 0xffffff);	
-	my_mlx_pixel_put(&img, x + 75 * cos(angle), y + 75 * sin(angle + PI), 0xff0000);
-	my_mlx_pixel_put(&img, x + 75 * sin(angle + PI), y + 75 * cos(angle + PI), 0x0000ff);
-	my_mlx_pixel_put(&img, x + 75 * sin(angle), y + 75 * cos(angle), 0x00ff00);
+	i = 5 * zoom;
+	my_mlx_pixel_put(&img, x + i * cos(angle), y + i * sin(angle + PI), 0xff0000);
+	my_mlx_pixel_put(&img, x + i * sin(angle + PI), y + i * cos(angle + PI), 0x0000ff);
+	my_mlx_pixel_put(&img, x + i * sin(angle), y + i * cos(angle), 0x00ff00);
+	x0 = x + i * cos(angle + PI);
+	y0 = y + i * sin(angle);
+	x1 = x + i * sin(angle + PI);
+	y1 = y + i * cos(angle + PI);
+	draw_line(x0, y0, x1, y1, &img);
+	x0 = x + i * cos(angle + PI);
+	y0 = y + i * sin(angle);
+	x1 = x + i * sin(angle);
+	y1 = y + i * cos(angle);
+	draw_line(x0, y0, x1, y1, &img);
+	x0 = x + i * cos(angle);
+	y0 = y + i * sin(angle + PI);
+	x1 = x + i * sin(angle + PI);
+	y1 = y + i * cos(angle + PI);
+	draw_line(x0, y0, x1, y1, &img);
+	x0 = x + i * cos(angle);
+	y0 = y + i * sin(angle + PI);
+	x1 = x + i * sin(angle);
+	y1 = y + i * cos(angle);
+	draw_line(x0, y0, x1, y1, &img);
 	mlx_put_image_to_window(grid->mlx, grid->win, img.img, 0, 0);
 }
 
-void	draw_line(int x1, int y1, int x2, int y2, t_data *img)
-{
-	
-}

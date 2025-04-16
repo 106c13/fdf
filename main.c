@@ -6,7 +6,7 @@
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 14:12:16 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/12 15:30:22 by haaghaja         ###   ########.fr       */
+/*   Updated: 2025/04/16 16:57:12 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 int	event_handler(int keycode, t_grid *grid)
 {
 	static double angle;	
+	static int	zoom;
 	t_data	img;
 
 	ft_printf("KEYCODE: %d\n", keycode);
@@ -36,11 +37,17 @@ int	event_handler(int keycode, t_grid *grid)
 		angle += 0.05;
 	else if (keycode == 65361)
 		angle -= 0.05;
+	else if (keycode == 65362)
+		zoom++;
+	else if (keycode == 65364)
+		zoom--;	
 	if (angle > 2 * PI)
 		angle = 0;
 	else if (angle < 0)
 		angle = 2 * PI;
-	draw_map(grid, angle);
+	if (zoom == 0)
+		zoom++;
+	draw_map(grid, angle, zoom);
 }
 
 int	main(int argc, char **argv)
@@ -57,7 +64,7 @@ int	main(int argc, char **argv)
 		grid.mlx = mlx_init();
 		grid.win = mlx_new_window(grid.mlx, width, height, "Hello world!");
 		mlx_hook(grid.win, 2, 1L<<0, event_handler, &grid);
-		draw_map(&grid, 0);
+		draw_map(&grid, 0, 1);
 		mlx_loop(grid.mlx);
 	}
 	return (0);
