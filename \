@@ -77,20 +77,35 @@ void	draw_map(t_grid *grid, double angle, int zoom)
 	y = 350;
 	my_mlx_pixel_put(&img, x, y, 0xffffff);
 	// Draw a line between dots
-	i = 5;
-
-	x0 = x + (i - 15) * zoom * sin(angle);
-	y0 = y + (i) * zoom * sin(angle);
-	x1 = x + (i - 15) * zoom * sin(angle);
-	y1 = y + (i + 15) * zoom * sin(angle);
-	//draw_line(x0, y0, x1, y1, &img);
+	i = 5 * zoom;
 
 
-	x0 = x + (i) * zoom * sin(angle);
-	y0 = y + (i) * zoom * sin(angle);
-	x1 = x + (i) * zoom * sin(angle);
-	y1 = y + (i) * zoom * sin(angle);
-	ft_printf("%d %d\n", y0, y1);
+	x0 = x + i * cos(angle + PI/2);
+	y0 = y + i * sin(angle);
+	x1 = x + i * sin(angle + PI/2);
+	y1 = y + i * cos(angle + PI/2);
+	draw_line(x0, y0, x1, y1, &img);
+
+
+	x0 = x + i * cos(angle + PI);
+	y0 = y + i * sin(angle);
+	x1 = x + i * sin(angle + PI);
+	y1 = y + i * cos(angle + PI);
+	draw_line(x0, y0, x1, y1, &img);
+	x0 = x + i * cos(angle + PI);
+	y0 = y + i * sin(angle);
+	x1 = x + i * sin(angle);
+	y1 = y + i * cos(angle);
+	draw_line(x0, y0, x1, y1, &img);
+	x0 = x + i * cos(angle);
+	y0 = y + i * sin(angle + PI);
+	x1 = x + i * sin(angle + PI);
+	y1 = y + i * cos(angle + PI);
+	draw_line(x0, y0, x1, y1, &img);
+	x0 = x + i * cos(angle);
+	y0 = y + i * sin(angle + PI);
+	x1 = x + i * sin(angle);
+	y1 = y + i * cos(angle);
 	draw_line(x0, y0, x1, y1, &img);
 	mlx_put_image_to_window(grid->mlx, grid->win, img.img, 0, 0);
 }

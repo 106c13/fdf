@@ -6,7 +6,7 @@
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 14:07:55 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/16 16:56:33 by haaghaja         ###   ########.fr       */
+/*   Updated: 2025/04/17 16:17:06 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 
 # define PI 3.14
+# define WIDTH 1000
+# define HEIGHT 1000
 
 # include <stdlib.h>
 # include <fcntl.h>
