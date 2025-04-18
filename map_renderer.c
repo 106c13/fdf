@@ -36,62 +36,71 @@ void	draw_map(t_grid *grid, double angle, int zoom)
 {
 	t_data	img;
 	int	i;
-	int	j;
 	int	x0, x1, y0, y1;
-	int	s;
+	int	dx, dy;
 	int	x;
 	int	y;
 	int	gw;
+	int	d;
 
 	img.img = mlx_new_image(grid->mlx, WIDTH, HEIGHT);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
 	i = 0;
 	gw = 500 / grid->width / 2;
-	x = 300;
-	y = 100;
-	s = 0;
-	printf("%f %f\n", sin(angle), cos(angle));
-	//my_mlx_pixel_put(&img, 0, 0, 0xffff00);
-	while (i < 0)
+	x = 500;
+	y = 500;
+	d = 5;
+	int width = grid->width;
+	int height = grid->height;
+	zoom = 5;
+	//angle = 0;
+	while (i < grid->size)
 	{
-		my_mlx_pixel_put(&img, gw * s + x, gw * s + y, grid->colors[i]);
-		j = 0; // j is 1, cuz we already draw x y, so we dont need to draw x+0 y+0 again
-		while (j < 0)
-		{
-			if ((i + 1) % grid->width != 0)	
-				my_mlx_pixel_put(&img, gw * s + x + j * cos(angle), gw * s + y + sin(angle) * j, grid->colors[i]);
-			if ((i / grid->width + 1) != grid->height)
-				my_mlx_pixel_put(&img, gw * s + x - j * sin(angle), gw * s + y + j * cos(angle), grid->colors[i]);	
-			j++;
-		}
-		s++;
+		if ((i + 1) % width <= width / 2)
+			dx = -(width - (i % width) - 1) * d * zoom;
+		else
+			dx = (width - (i % width) - 1) * d * zoom;
+		if ((i / width + 1) % height <= height / 2)
+			dy = -(height - (i / width) - 1) * d * zoom;
+		else
+			dy = (height - (i / width) - 1) * d * zoom;
+		x0 = x + dx * cos(angle) - dy * sin(angle);
+		y0 = y + dx * sin(angle) + dy * cos(angle);
+		//printf("X: %d Y: %d Dx: %d Dy: %d\n", x0, y0, dx, dy); 
+		my_mlx_pixel_put(&img, x0, y0, grid->colors[i]);
 		i++;
-		if (i % grid->width == 0)
-		{
-			s = 0;
-			x -= gw * cos(angle);
-			y += gw * sin(angle);
-		}
+		//break ;
 	}
-	x = 350;
-	y = 350;
+	mlx_put_image_to_window(grid->mlx, grid->win, img.img, 0, 0);
+	return ;
+	x = 500;
+	y = 500;
 	my_mlx_pixel_put(&img, x, y, 0xffffff);
 	// Draw a line between dots
-	i = 5;
-
-	x0 = x + (i - 15) * zoom * sin(angle);
-	y0 = y + (i) * zoom * sin(angle);
-	x1 = x + (i - 15) * zoom * sin(angle);
-	y1 = y + (i + 15) * zoom * sin(angle);
-	//draw_line(x0, y0, x1, y1, &img);
-
-
-	x0 = x + (i) * zoom * sin(angle);
-	y0 = y + (i) * zoom * sin(angle);
-	x1 = x + (i) * zoom * sin(angle);
-	y1 = y + (i) * zoom * sin(angle);
-	ft_printf("%d %d\n", y0, y1);
+	d = 5;
+	x0 = x + zoom * (d * cos(angle) - 0 * sin(angle));
+	y0 = y + zoom * (d * sin(angle) + 0 * cos(angle));
+	x1 = x + zoom * (0 * cos(angle) - d * sin(angle));
+	y1 = y + zoom * (0 * sin(angle) + d * cos(angle));
 	draw_line(x0, y0, x1, y1, &img);
+	x0 = x + zoom * (0 * cos(angle) - d * sin(angle));
+	y0 = y + zoom * (0 * sin(angle) + d * cos(angle));
+	x1 = x + zoom * (-d * cos(angle) - 0 * sin(angle));
+	y1 = y + zoom * (-d * sin(angle) + 0 * cos(angle));
+	draw_line(x0, y0, x1, y1, &img);
+	x0 = x + zoom * (-d * cos(angle) - 0 * sin(angle));
+	y0 = y + zoom * (-d * sin(angle) + 0 * cos(angle));
+	x1 = x + zoom * (0 * cos(angle) - (-d) * sin(angle));
+	y1 = y + zoom * (0 * sin(angle) + (-d) * cos(angle));
+	draw_line(x0, y0, x1, y1, &img);
+	x0 = x + zoom * (d * cos(angle) - 0 * sin(angle));
+	y0 = y + zoom * (d * sin(angle) + 0 * cos(angle));
+	draw_line(x0, y0, x1, y1, &img);
+	
+	x1 = x + zoom * (2 * d * cos(angle) - d * sin(angle));
+	y1 = y + zoom * (2 * d * sin(angle) + d * cos(angle));
+	draw_line(x0, y0, x1, y1, &img);
+	my_mlx_pixel_put(&img, x1, y1, 0xff0000);
 	mlx_put_image_to_window(grid->mlx, grid->win, img.img, 0, 0);
 }
 
