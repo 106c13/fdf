@@ -56,7 +56,7 @@ int	get_grid_size(int fd);
 int	create_grid(char *fnamem, t_grid *grid);
 
 // map_renderer.c
-void	draw_map(t_grid *grid, double angle, int zoom);
+void	draw_map(t_grid *grid, double angle, int zoom, int x, int y);
 
 // utils.c
 int	ft_htod(char **str);

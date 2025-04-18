@@ -32,14 +32,12 @@ void	draw_line(int x0, int y0, int x1, int y1, t_data *img)
 	}
 }
 
-void	draw_map(t_grid *grid, double angle, int zoom)
+void	draw_map(t_grid *grid, double angle, int zoom, int x, int y)
 {
 	t_data	img;
 	int	i;
 	int	x0, x1, y0, y1;
 	int	dx, dy;
-	int	x;
-	int	y;
 	int	gw;
 	int	d;
 
@@ -47,29 +45,33 @@ void	draw_map(t_grid *grid, double angle, int zoom)
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
 	i = 0;
 	gw = 500 / grid->width / 2;
-	x = 500;
-	y = 500;
-	d = 5;
+	d = 1;
 	int width = grid->width;
 	int height = grid->height;
-	zoom = 5;
-	//angle = 0;
+	//zoom = 5;	
 	while (i < grid->size)
 	{
-		if ((i + 1) % width <= width / 2)
-			dx = -(width - (i % width) - 1) * d * zoom;
-		else
-			dx = (width - (i % width) - 1) * d * zoom;
-		if ((i / width + 1) % height <= height / 2)
-			dy = -(height - (i / width) - 1) * d * zoom;
-		else
-			dy = (height - (i / width) - 1) * d * zoom;
+		dx = -(width - 2 * (i % width) - 1) * d * zoom;
+		dy = -(height - 2 * (i / width) - 1) * d * zoom;
 		x0 = x + dx * cos(angle) - dy * sin(angle);
 		y0 = y + dx * sin(angle) + dy * cos(angle);
-		//printf("X: %d Y: %d Dx: %d Dy: %d\n", x0, y0, dx, dy); 
-		my_mlx_pixel_put(&img, x0, y0, grid->colors[i]);
+		if (i % width  < width - 1)
+		{
+			dx = -(width - 2 * ((i + 1) % width) - 1) * d * zoom;
+			dy = -(height - 2 * ((i + 1) / width) - 1) * d * zoom;
+			x1 = x + dx * cos(angle) - dy * sin(angle);
+			y1 = y + dx * sin(angle) + dy * cos(angle);
+			draw_line(x0, y0, x1, y1, &img);
+		}
+		if (i / width < height - 1)
+		{
+			dx = -(width - 2 * ((i + width) % width) - 1) * d * zoom;
+			dy = -(height - 2 * ((i + width) / width) - 1) * d * zoom;
+			x1 = x + dx * cos(angle) - dy * sin(angle);
+			y1 = y + dx * sin(angle) + dy * cos(angle);
+			draw_line(x0, y0, x1, y1, &img);
+		}
 		i++;
-		//break ;
 	}
 	mlx_put_image_to_window(grid->mlx, grid->win, img.img, 0, 0);
 	return ;
