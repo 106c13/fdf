@@ -6,7 +6,7 @@
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 14:07:55 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/17 16:17:06 by haaghaja         ###   ########.fr       */
+/*   Updated: 2025/04/19 14:25:53 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,13 @@ typedef struct s_grid
 	int	width;
 	int	height;
 	int	size;
+	int	x;
+	int	y;
+	int	z;
+	double	x_angle;
+	double	y_angle;
+	double	z_angle;	
+	int	zoom;
 	int	*values;
 	int	*colors;
 } t_grid;
@@ -56,7 +63,7 @@ int	get_grid_size(int fd);
 int	create_grid(char *fnamem, t_grid *grid);
 
 // map_renderer.c
-void	draw_map(t_grid *grid, double angle, int zoom, int x, int y);
+void	draw_map(t_grid *grid);
 
 // utils.c
 int	ft_htod(char **str);
