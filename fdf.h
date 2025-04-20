@@ -6,7 +6,7 @@
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 14:07:55 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/19 14:25:53 by haaghaja         ###   ########.fr       */
+/*   Updated: 2025/04/20 17:08:51 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,13 @@ typedef struct	s_data {
 	int		line_length;
 	int		endian;
 }				t_data;
+
+typedef struct s_point
+{
+	int	x;
+	int	y;
+	int	color;
+} t_point;
 
 // ft_splic.c
 char	**ft_split(char *str, char sep);
