@@ -41,8 +41,8 @@ void	parse_line(char *line, t_grid *grid, int *i)
 			else
 				grid->colors[*i] = 16777215;
 			(*i)++;
+			width++;
 		}
-		width++;
 		line++;
 	}
 	grid->width = width;

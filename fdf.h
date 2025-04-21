@@ -42,6 +42,7 @@ typedef struct s_grid
 	double	z_angle;	
 	int	*values;
 	int	*colors;
+	int	h_scale;
 } t_grid;
 
 typedef struct	s_data {

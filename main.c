@@ -16,8 +16,11 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
 	char	*dst;
 
-	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-	*(unsigned int*)dst = color;
+	if (x < WIDTH && x >= 0 && y < HEIGHT && y >= 0)
+	{
+		dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
+		*(unsigned int*)dst = color;
+	}
 }
 
 
@@ -55,6 +58,10 @@ int	event_handler(int keycode, t_grid *grid)
 		grid->y += 8;
 	else if (keycode == 65362)
 		grid->y -= 8;
+	else if (keycode == 104)
+		grid->h_scale += 10;
+	else if (keycode == 103)
+		grid->h_scale -= 10;
 	if (grid->z < 1)
 		grid->z = 1;
 	draw_map(grid);
@@ -72,12 +79,10 @@ int	main(int argc, char **argv)
 		ft_printf("W: %d H: %d\n", grid.width, grid.height);
 		grid.mlx = mlx_init();
 		grid.win = mlx_new_window(grid.mlx, WIDTH, HEIGHT, "Hello world!");
-		grid.x = 500;
-		grid.y = 500;
-		//grid.x_angle = 0;
-		//grid.y_angle = 0;
-		//grid.z_angle = 0;
-		grid.z = 1;
+		grid.x = 0;
+		grid.y = 0;
+		grid.z = 15;
+		grid.h_scale = 1;
 		mlx_hook(grid.win, 2, 1L<<0, event_handler, &grid);
 		draw_map(&grid);
 		mlx_loop(grid.mlx);

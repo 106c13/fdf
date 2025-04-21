@@ -11,7 +11,7 @@ void	draw_line(t_point p0, t_point p1, t_data *img)
 	dx = abs(p1.x - p0.x);
 	dy = abs(p1.y - p0.y);
 	err = dx - dy;
-	while (p0.x != p1.x || p0.y != p1.y)
+	while (abs(p0.x - p1.x) > 1 || abs(p0.y - p1.y) > 1)
 	{
 		my_mlx_pixel_put(img, p0.x, p0.y, p0.color);
 		if (err > -dy)
@@ -35,91 +35,122 @@ void	draw_line(t_point p0, t_point p1, t_data *img)
 	}
 }
 
-void rotate_point(t_point *point, t_grid *grid)
+void rotate_point(t_point *p, t_grid *grid)
 {
     float rx = grid->x_angle;
     float ry = grid->y_angle;
     float rz = grid->z_angle;
 
-    float tx, ty, tz;
+    float x = p->x;
+    float y = p->y;
+    float z = p->z;
 
-    // Rotate around X axis (pitch)
-    ty = point->y * cos(rx) - point->z * sin(rx);
-    tz = point->y * sin(rx) + point->z * cos(rx);
-    point->y = ty;
-    point->z = tz;
+    float y1 = y * cos(rx) - z * sin(rx);
+    float z1 = y * sin(rx) + z * cos(rx);
 
-    // Rotate around Y axis (yaw)
-    tx = point->x * cos(ry) + point->z * sin(ry);
-    tz = -point->x * sin(ry) + point->z * cos(ry);
-    point->x = tx;
-    point->z = tz;
+    float x2 = x * cos(ry) + z1 * sin(ry);
+    float z2 = -x * sin(ry) + z1 * cos(ry);
 
-    // Rotate around Z axis (roll)
-    tx = point->x * cos(rz) - point->y * sin(rz);
-    ty = point->x * sin(rz) + point->y * cos(rz);
-    point->x = tx;
-    point->y = ty;
+    float x3 = x2 * cos(rz) - y1 * sin(rz);
+    float y3 = x2 * sin(rz) + y1 * cos(rz);
+
+    p->x = x3;
+    p->y = y3;
+    p->z = z2;
+}
+
+void project_perspective(t_point *p, float f, int screen_w, int screen_h, t_grid *grid)
+{
+    float camera_z = -1000.0f; // step back
+    float relative_z = p->z - camera_z;
+    if (relative_z < 1.0f) relative_z = 1.0f;
+
+    p->x = (p->x * f) / relative_z + screen_w / 2 + grid->x;
+    p->y = (p->y * f) / relative_z + screen_h / 2 + grid->y;
+}
+
+void	project_isometric(t_point *p, t_grid *grid)
+{
+	int	x;
+	int	y;
+
+	x = p->x - p->y + WIDTH / 2;
+	y = (p->x + p->y) / 2 - p->z + HEIGHT / 2;
+	p->x = x + grid->x;
+	p->y = y + grid->y; 
 }
 
 void draw_map(t_grid *grid)
 {
-	t_data img;
-	t_point	point;
-	t_point point1;
+    t_data img;
+    img.img = mlx_new_image(grid->mlx, WIDTH, HEIGHT);
+    img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
 
-	img.img = mlx_new_image(grid->mlx, WIDTH, HEIGHT);
-	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
+    int width = grid->width;
+    int height = grid->height;
+    int spacing = grid->z;
+    float f = 600.0f;
+    int i = 0;
+    int x0, y0;
 
-	int width = grid->width;
-	int height = grid->height;
-	int x0, y0, i = 0;
-	int gx, gy;
-	int spacing = grid->z; // distance between points on grid
-	//printf("%f %f %f\n", grid->x_angle, grid->y_angle, grid->z_angle);
-	while (i < grid->size)
-	{
-		gx = i % width;
-		gy = i / width;
-		point.x = (gx - width / 2) * spacing;
-		point.y = (gy - height / 2) * spacing;
-		point.z = grid->values[i] * spacing;
-		rotate_point(&point, grid);
-		x0 = point.x - point.y + WIDTH / 2;
-		y0 = (point.x + point.y) / 2 - point.z + HEIGHT / 2;
-		point.x = x0;
-		point.y = y0;
-		if (i % width < width - 1)
-		{	
-			gx = (i + 1) % width;
-			gy = (i + 1) / width;
-			point1.x = (gx - width / 2) * spacing;
-			point1.y = (gy - height / 2) * spacing;
-			point1.z = grid->values[i+1] * spacing;
-			rotate_point(&point1, grid);
-			x0 = point1.x - point1.y + WIDTH / 2;
-			y0 = (point1.x + point1.y) / 2 - point1.z + HEIGHT / 2;
-			point1.x = x0;
-			point1.y = y0;
-			draw_line(point, point1, &img);
-		}
-		if (i / width < height - 1)
-		{	
-			gx = (i + width) % width;
-			gy = (i + width) / width;
-			point1.x = (gx - width / 2) * spacing;
-			point1.y = (gy - height / 2) * spacing;
-			point1.z = grid->values[i +  width] * spacing;
-			rotate_point(&point1, grid);
-			x0 = point1.x - point1.y + WIDTH / 2;
-			y0 = (point1.x + point1.y) / 2 - point1.z + HEIGHT / 2;
-			point1.x = x0;
-			point1.y = y0;
-			draw_line(point, point1, &img);
-		}
-		//my_mlx_pixel_put(&img, point.x, point.y, grid->colors[i]);
-		i++;
-	}
+    while (i < grid->size)
+    {
+        int gx = i % width;
+        int gy = i / width;
 
-	mlx_put_image_to_window(grid->mlx, grid->win, img.img, 0, 0);
+        // Point A
+        t_point a;
+        a.x = (gx - width / 2) * spacing;
+        a.y = (gy - height / 2) * spacing;
+        a.z = grid->values[i] * spacing;
+        if (grid->values[i] != 0)
+            a.z += grid->h_scale;
+
+        rotate_point(&a, grid);
+        project_perspective(&a, f, WIDTH, HEIGHT, grid);
+       //project_isometric(&a, grid); 
+        if (gx < width - 1)
+        {
+            t_point b;
+            int j = i + 1;
+
+            b.x = ((j % width) - width / 2) * spacing;
+            b.y = ((j / width) - height / 2) * spacing;
+            b.z = grid->values[j] * spacing;
+            if (grid->values[j] != 0)
+                b.z += grid->h_scale;
+
+            rotate_point(&b, grid);
+            project_perspective(&b, f, WIDTH, HEIGHT, grid);
+       	//project_isometric(&b, grid); 
+            draw_line(a, b, &img);
+        }
+        if (gy < height - 1)
+        {
+            t_point c;
+            int j = i + width;
+
+            c.x = ((j % width) - width / 2) * spacing;
+            c.y = ((j / width) - height / 2) * spacing;
+            c.z = grid->values[j] * spacing;
+            if (grid->values[j] != 0)
+                c.z += grid->h_scale;
+
+            rotate_point(&c, grid);
+            project_perspective(&c, f, WIDTH, HEIGHT, grid);
+
+       	//project_isometric(&c, grid); 
+            draw_line(a, c, &img);
+        }
+
+        i++;
+    }
+
+    mlx_put_image_to_window(grid->mlx, grid->win, img.img, 0, 0);
 }
+
+
+
+		// ISO
+		//x0 = point.x - point.y + WIDTH / 2;
+		//y0 = (point.x + point.y) / 2 - point.z + HEIGHT / 2;
