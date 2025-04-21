@@ -39,6 +39,10 @@ int	event_handler(int keycode, t_grid *grid)
 		grid->x_angle -= 0.1;
 	else if (keycode == 115)
 		grid->x_angle += 0.1;
+	else if (keycode == 113)
+		grid->y_angle -= 0.1;
+	else if (keycode == 101)
+		grid->y_angle += 0.1;
 	else if (keycode == 32)
 		grid->z += 1;
 	else if (keycode == 65289)
@@ -51,14 +55,6 @@ int	event_handler(int keycode, t_grid *grid)
 		grid->y += 8;
 	else if (keycode == 65362)
 		grid->y -= 8;
-	if (grid->x_angle > 2 * PI)
-		grid->x_angle = 0;
-	else if (grid->x_angle < 0)
-		grid->x_angle = 2 * PI;
-	if (grid->z_angle > 2 * PI)
-		grid->z_angle = 0;
-	else if (grid->z_angle < 0)
-		grid->z_angle = 2 * PI;
 	if (grid->z < 1)
 		grid->z = 1;
 	draw_map(grid);
@@ -78,10 +74,10 @@ int	main(int argc, char **argv)
 		grid.win = mlx_new_window(grid.mlx, WIDTH, HEIGHT, "Hello world!");
 		grid.x = 500;
 		grid.y = 500;
-		grid.x_angle = PI/2;
-		grid.y_angle = 0;
-		grid.z_angle = PI/2;
-		grid.z = 20;
+		//grid.x_angle = 0;
+		//grid.y_angle = 0;
+		//grid.z_angle = 0;
+		grid.z = 1;
 		mlx_hook(grid.win, 2, 1L<<0, event_handler, &grid);
 		draw_map(&grid);
 		mlx_loop(grid.mlx);

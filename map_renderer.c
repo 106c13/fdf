@@ -35,91 +35,91 @@ void	draw_line(t_point p0, t_point p1, t_data *img)
 	}
 }
 
-void	draw_map(t_grid *grid)
+void rotate_point(t_point *point, t_grid *grid)
 {
-	t_data	img;
-	int	i;
-	int	x0, x1, y0, y1, z0, z1;
-	int	dx, dy, dz;
-	int	dtx, dty;
-	int	d;
-	int	factor;
-	int	dis;
-	t_point	p0;
-	t_point	p1;
+    float rx = grid->x_angle;
+    float ry = grid->y_angle;
+    float rz = grid->z_angle;
+
+    float tx, ty, tz;
+
+    // Rotate around X axis (pitch)
+    ty = point->y * cos(rx) - point->z * sin(rx);
+    tz = point->y * sin(rx) + point->z * cos(rx);
+    point->y = ty;
+    point->z = tz;
+
+    // Rotate around Y axis (yaw)
+    tx = point->x * cos(ry) + point->z * sin(ry);
+    tz = -point->x * sin(ry) + point->z * cos(ry);
+    point->x = tx;
+    point->z = tz;
+
+    // Rotate around Z axis (roll)
+    tx = point->x * cos(rz) - point->y * sin(rz);
+    ty = point->x * sin(rz) + point->y * cos(rz);
+    point->x = tx;
+    point->y = ty;
+}
+
+void draw_map(t_grid *grid)
+{
+	t_data img;
+	t_point	point;
+	t_point point1;
+
 	img.img = mlx_new_image(grid->mlx, WIDTH, HEIGHT);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
-	i = 0;
-	d = grid->z;
 
 	int width = grid->width;
 	int height = grid->height;
+	int x0, y0, i = 0;
+	int gx, gy;
+	int spacing = grid->z; // distance between points on grid
+	//printf("%f %f %f\n", grid->x_angle, grid->y_angle, grid->z_angle);
 	while (i < grid->size)
 	{
-		x0 = -(width - 2 * (i % width) - 1) * d;
-		y0 = -(height - 2 * (i / width) - 1) * d;
-		dx = x0 * cos(grid->z_angle) - y0 * sin(grid->z_angle);
-		dy = x0 * sin(grid->z_angle) + y0 * cos(grid->z_angle);
-		dz = 0;
-
-		dy = x0 * cos(grid->x_angle) - z0 * sin(grid->x_angle);
-		dy = x0 * sin(grid->x_angle) + z0 * cos(grid->x_angle);
-		dis = 10;
-		factor = dis/(dis + dz);	
-		x0 = grid->x + dx * factor;
-		y0 = grid->y + dy * factor;
-		printf("%f %f\n", grid->x_angle, grid->z_angle);
+		gx = i % width;
+		gy = i / width;
+		point.x = (gx - width / 2) * spacing;
+		point.y = (gy - height / 2) * spacing;
+		point.z = grid->values[i] * spacing;
+		rotate_point(&point, grid);
+		x0 = point.x - point.y + WIDTH / 2;
+		y0 = (point.x + point.y) / 2 - point.z + HEIGHT / 2;
+		point.x = x0;
+		point.y = y0;
 		if (i % width < width - 1)
-		{
-			x1 = -(width - 2 * ((i + 1) % width) - 1) * d;
-			y1 = -(height - 2 * ((i + 1) / width) - 1) * d;
-			dx = x1 * cos(grid->z_angle) - y1 * sin(grid->z_angle);
-			dy = x1 * sin(grid->z_angle) + y1 * cos(grid->z_angle);
-			dz = 0;
-
-			dy = x1 * cos(grid->x_angle) - z0 * sin(grid->x_angle);
-			dy = x1 * sin(grid->x_angle) + z0 * cos(grid->x_angle);
-			dis = 10;
-			factor = dis/(dis + dz);	
-			x1 = grid->x + dx * factor;
-			y1 = grid->y + dy * factor;
-			
-			p0.x = x0;
-			p0.y = y0;
-			p0.color = grid->colors[i];
-			p1.x = x1;
-			p1.y = y1;
-			p1.color = grid->colors[i + 1];
-			//printf("=%d %d %d %d\n", p0.x, p0.y, p1.x, p1.y);
-			draw_line(p0, p1, &img);
+		{	
+			gx = (i + 1) % width;
+			gy = (i + 1) / width;
+			point1.x = (gx - width / 2) * spacing;
+			point1.y = (gy - height / 2) * spacing;
+			point1.z = grid->values[i+1] * spacing;
+			rotate_point(&point1, grid);
+			x0 = point1.x - point1.y + WIDTH / 2;
+			y0 = (point1.x + point1.y) / 2 - point1.z + HEIGHT / 2;
+			point1.x = x0;
+			point1.y = y0;
+			draw_line(point, point1, &img);
 		}
 		if (i / width < height - 1)
-		{
-			x1 = -(width - 2 * ((i + width) % width) - 1) * grid->z;
-			y1 = -(height - 2 * ((i + width) / width) - 1) * grid->z;
-			dx = x1 * cos(grid->z_angle) - y1 * sin(grid->z_angle);
-			dy = x1 * sin(grid->z_angle) + y1 * cos(grid->z_angle);
-			dz = 0;
-
-			dy = x1 * cos(grid->x_angle) - z0 * sin(grid->x_angle);
-			dy = x1 * sin(grid->x_angle) + z0 * cos(grid->x_angle);
-			dis = 10;
-			factor = dis/(dis + dz);	
-			x1 = grid->x + dx * factor;
-			y1 = grid->y + dy * factor;
-			
-			p0.x = x0;
-			p0.y = y0;
-			p0.color = grid->colors[i];
-			p1.x = x1;
-			p1.y = y1;
-			p1.color = grid->colors[i + width];
-			//printf("=%d %d %d %d\n", p0.x, p0.y, p1.x, p1.y);
-			draw_line(p0, p1, &img);
+		{	
+			gx = (i + width) % width;
+			gy = (i + width) / width;
+			point1.x = (gx - width / 2) * spacing;
+			point1.y = (gy - height / 2) * spacing;
+			point1.z = grid->values[i +  width] * spacing;
+			rotate_point(&point1, grid);
+			x0 = point1.x - point1.y + WIDTH / 2;
+			y0 = (point1.x + point1.y) / 2 - point1.z + HEIGHT / 2;
+			point1.x = x0;
+			point1.y = y0;
+			draw_line(point, point1, &img);
 		}
-		//my_mlx_pixel_put(&img, x0, y0, grid->colors[i]);
+		//my_mlx_pixel_put(&img, point.x, point.y, grid->colors[i]);
 		i++;
 	}
+
 	mlx_put_image_to_window(grid->mlx, grid->win, img.img, 0, 0);
 }
-
