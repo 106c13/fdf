@@ -6,7 +6,7 @@
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 14:12:16 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/20 17:54:36 by haaghaja         ###   ########.fr       */
+/*   Updated: 2025/04/22 14:37:34 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,10 @@ int	event_handler(int keycode, t_grid *grid)
 		grid->h_scale += 10;
 	else if (keycode == 103)
 		grid->h_scale -= 10;
+	else if (keycode == 49)
+		grid->view_mode = 1;
+	else if (keycode == 50)
+		grid->view_mode = 2;
 	if (grid->z < 1)
 		grid->z = 1;
 	draw_map(grid);
@@ -83,6 +87,7 @@ int	main(int argc, char **argv)
 		grid.y = 0;
 		grid.z = 15;
 		grid.h_scale = 1;
+		grid.view_mode = 2;
 		mlx_hook(grid.win, 2, 1L<<0, event_handler, &grid);
 		draw_map(&grid);
 		mlx_loop(grid.mlx);

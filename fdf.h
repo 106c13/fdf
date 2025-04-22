@@ -6,7 +6,7 @@
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 14:07:55 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/20 17:08:51 by haaghaja         ###   ########.fr       */
+/*   Updated: 2025/04/22 14:41:16 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 
 # define PI 3.14
-# define WIDTH 1000
+# define WIDTH 1500
 # define HEIGHT 1000
 
 # include <stdlib.h>
@@ -43,6 +43,7 @@ typedef struct s_grid
 	int	*values;
 	int	*colors;
 	int	h_scale;
+	int	view_mode;
 } t_grid;
 
 typedef struct	s_data {
