@@ -40,6 +40,7 @@ void	parse_line(char *line, t_grid *grid, int *i)
 				grid->colors[*i] = ft_htod(&line);
 			else
 				grid->colors[*i] = 16777215;
+			grid->selected_points[*i] = 0;
 			(*i)++;
 			width++;
 		}
@@ -79,6 +80,7 @@ int	create_grid(char *fname, t_grid *grid)
 		return (0);
 	grid->values = (int *)malloc(sizeof(int) * size);
 	grid->colors = (int *)malloc(sizeof(int) * size);
+	grid->selected_points = (int *)malloc(sizeof(int) * size);
 	if (!grid->values || !grid->colors)
 		return (error("Can't allocate memory\n", 0));
 	fd = open(fname, O_RDONLY);

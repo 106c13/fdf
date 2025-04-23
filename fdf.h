@@ -1,6 +1,4 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
 /*   fdf.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
@@ -27,6 +25,14 @@
 // TODO: remove this V
 #include "ft_printf.h"
 
+typedef struct	s_data {
+	void	*img;
+	char	*addr;
+	int		bits_per_pixel;
+	int		line_length;
+	int		endian;
+}				t_data;
+
 typedef struct s_grid
 {
 	void	*mlx;
@@ -44,15 +50,12 @@ typedef struct s_grid
 	int	*colors;
 	int	h_scale;
 	int	view_mode;
+	int	flag;
+	t_data	*img;
+	int	*selected_points;
+	int	s_point;
 } t_grid;
 
-typedef struct	s_data {
-	void	*img;
-	char	*addr;
-	int		bits_per_pixel;
-	int		line_length;
-	int		endian;
-}				t_data;
 
 typedef struct s_point
 {
@@ -72,7 +75,7 @@ int	get_grid_size(int fd);
 int	create_grid(char *fnamem, t_grid *grid);
 
 // map_renderer.c
-void	draw_map(t_grid *grid);
+void	draw_map(t_grid *grid, int edit_mode);
 
 // utils.c
 int	ft_htod(char **str);

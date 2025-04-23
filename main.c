@@ -19,16 +19,41 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 	if (x < WIDTH && x >= 0 && y < HEIGHT && y >= 0)
 	{
 		dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-		*(unsigned int*)dst = color;
+		*(int *)dst = color;
 	}
 }
 
 
+void	change_height(t_grid *grid, int value)
+{
+	int	i;
+
+	i = 0;
+	while (i < grid->size)
+	{
+		if (grid->selected_points[i] != 0)
+			grid->values[i] += value;
+		i++;
+	}
+}
+
+void	unselect_all(t_grid *grid)
+{
+	int	i;
+
+	i = 0;
+	while (i < grid->size)
+	{
+		grid->selected_points[i] = 0;
+		i++;
+	}
+}
+
 int	event_handler(int keycode, t_grid *grid)
 {
-	t_data	img;
+	static int edit_mode;
 
-	ft_printf("KEYCODE: %d\n", keycode);
+	ft_printf("%d\n", keycode);
 	if (keycode == 65307)
 	{
 		mlx_destroy_window(grid->mlx, grid->win);
@@ -58,24 +83,63 @@ int	event_handler(int keycode, t_grid *grid)
 		grid->y += 8;
 	else if (keycode == 65362)
 		grid->y -= 8;
-	else if (keycode == 104)
-		grid->h_scale += 10;
-	else if (keycode == 103)
-		grid->h_scale -= 10;
+	else if (keycode == 61)
+		change_height(grid, 1);
+	else if (keycode == 45)
+		change_height(grid, -1);
 	else if (keycode == 49)
 		grid->view_mode = 1;
 	else if (keycode == 50)
 		grid->view_mode = 2;
+	else if (keycode == 118)
+	{
+		edit_mode++;
+		edit_mode %= 2;
+	}
+	else if (keycode == 99)
+	{
+		grid->selected_points[grid->s_point]++;
+		grid->selected_points[grid->s_point] %= 2;
+	}
+	else if (keycode == 120)
+		unselect_all(grid);
+	else if (keycode == 107)
+	{
+		if (grid->s_point + grid->width < grid->size)
+			grid->s_point += grid->width;
+	}
+	else if (keycode == 105)
+	{
+		if (grid->s_point - grid->width >= 0)
+			grid->s_point -= grid->width;
+	}
+	else if (keycode == 106)
+	{
+		if (grid->s_point != 0)
+			grid->s_point -= 1;
+	}
+	else if (keycode == 108)
+	{
+		if (grid->s_point != grid->size - 1)
+			grid->s_point += 1;
+	}
 	if (grid->z < 1)
 		grid->z = 1;
-	draw_map(grid);
-	return (1);
+	if (grid->flag)
+	{
+		grid->flag = 0;
+		draw_map(grid, edit_mode);
+	}
+	else
+		ft_printf("Busy\n");
+	return (0);
 }
 
 int	main(int argc, char **argv)
 {
 	t_grid	grid;
-
+	t_data img;
+	
 	if (argc == 2)
 	{
 		if (!create_grid(argv[1], &grid))
@@ -88,8 +152,13 @@ int	main(int argc, char **argv)
 		grid.z = 15;
 		grid.h_scale = 1;
 		grid.view_mode = 2;
+		grid.flag = 1;
+		grid.s_point = 0;
+		img.img = mlx_new_image(grid.mlx, WIDTH, HEIGHT);
+		img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
+		grid.img = &img;
 		mlx_hook(grid.win, 2, 1L<<0, event_handler, &grid);
-		draw_map(&grid);
+		draw_map(&grid, 0);
 		mlx_loop(grid.mlx);
 	}
 	return (0);

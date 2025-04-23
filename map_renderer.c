@@ -7,6 +7,8 @@ int	gradient_change(int c1, int c2, float t)
 	int r1, g1, b1;
 	int r2, g2, b2;
 
+	if (c1 == c2 || t == 0)
+		return (c1);
 	r1 = c1 >> 16;
 	r2 = c2 >> 16;
 	g1 = (c2 >> 8) % 256;
@@ -62,22 +64,18 @@ void	draw_line(t_point p0, t_point p1, t_data *img)
 
 void rotate_point(t_point *p, t_grid *grid)
 {
-    float rx = grid->x_angle;
-    float ry = grid->y_angle;
-    float rz = grid->z_angle;
-
     float x = p->x;
     float y = p->y;
     float z = p->z;
 
-    float y1 = y * cos(rx) - z * sin(rx);
-    float z1 = y * sin(rx) + z * cos(rx);
+    float y1 = y * cos(grid->x_angle) - z * sin(grid->x_angle);
+    float z1 = y * sin(grid->x_angle) + z * cos(grid->x_angle);
 
-    float x2 = x * cos(ry) + z1 * sin(ry);
-    float z2 = -x * sin(ry) + z1 * cos(ry);
+    float x2 = x * cos(grid->y_angle) + z1 * sin(grid->y_angle);
+    float z2 = -x * sin(grid->y_angle) + z1 * cos(grid->y_angle);
 
-    float x3 = x2 * cos(rz) - y1 * sin(rz);
-    float y3 = x2 * sin(rz) + y1 * cos(rz);
+    float x3 = x2 * cos(grid->z_angle) - y1 * sin(grid->z_angle);
+    float y3 = x2 * sin(grid->z_angle) + y1 * cos(grid->z_angle);
 
     p->x = x3;
     p->y = y3;
@@ -105,79 +103,109 @@ void	project_isometric(t_point *p, t_grid *grid)
 	p->y = y + grid->y; 
 }
 
-void draw_map(t_grid *grid)
+void    reset_img(t_data *img)
 {
-	t_data img;
-	img.img = mlx_new_image(grid->mlx, WIDTH, HEIGHT);
-	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
+        int     y;  
+        int     x;  
 
+        y = 0;
+        while (y < HEIGHT)
+        {
+                x = 0;
+                while (x < WIDTH)
+			my_mlx_pixel_put(img, x++, y, 0);
+		y++;
+        }
+}
+
+int	get_color(int i)
+{
+	if (i == 2 || i == 3)
+		return (0xff7000);
+	if (i == 1)
+		return (0xff0000);
+	if (i == 0)
+		return (0xffffff);
+}
+
+void draw_map(t_grid *grid, int edit_mode)
+{
 	int width = grid->width;
 	int height = grid->height;
 	int spacing = grid->z;
 	float f = 600.0f;
 	int i = 0;
-	int x0, y0;
+	int j;
+	int gx, gy;
+	t_point a, b, c;
 
+	reset_img(grid->img);
+	grid->selected_points[grid->s_point] += 2;
 	while (i < grid->size)
 	{
-		int gx = i % width;
-		int gy = i / width;
+		gx = i % width;
+		gy = i / width;
 
 		// Point A
-		t_point a;
 		a.x = (gx - width / 2) * spacing;
 		a.y = (gy - height / 2) * spacing;
 		a.z = grid->values[i] * spacing;
-		a.color = grid->colors[i];
+		if (edit_mode)
+			a.color = get_color(grid->selected_points[i]);
+		else
+			a.color = grid->colors[i];
 		if (grid->values[i] != 0)
 		    a.z += grid->h_scale;
 
 		rotate_point(&a, grid);
+			c.color = grid->colors[i + width];
 		if (grid->view_mode == 1)
 			project_perspective(&a, f, WIDTH, HEIGHT, grid);
 		else if (grid->view_mode == 2)
 			project_isometric(&a, grid); 
 		if (gx < width - 1)
 		{
-			t_point b;
-			int j = i + 1;
-
+			j = i + 1;
 			b.x = ((j % width) - width / 2) * spacing;
 			b.y = ((j / width) - height / 2) * spacing;
 			b.z = grid->values[j] * spacing;
-			b.color = grid->colors[i + 1];
+			if (edit_mode)
+				b.color = get_color(grid->selected_points[i + 1]);
+			else
+				b.color = grid->colors[i + 1];
 			if (grid->values[j] != 0)
 				b.z += grid->h_scale;
-
 			rotate_point(&b, grid);
 			if (grid->view_mode == 1)
 				project_perspective(&b, f, WIDTH, HEIGHT, grid);
 			else if (grid->view_mode == 2)
 				project_isometric(&b, grid); 
-			draw_line(a, b, &img);
+			draw_line(a, b, grid->img);
 		}
 		if (gy < height - 1)
 		{
-			t_point c;
-			int j = i + width;
-
+			j = i + width;
 			c.x = ((j % width) - width / 2) * spacing;
 			c.y = ((j / width) - height / 2) * spacing;
 			c.z = grid->values[j] * spacing;
-			c.color = grid->colors[i + width];
+			if (edit_mode)
+				c.color = get_color(grid->selected_points[i + width]);
+			else
+				c.color = grid->colors[i + width];
 			if (grid->values[j] != 0)
 				c.z += grid->h_scale;
-
 			rotate_point(&c, grid);
 			if (grid->view_mode == 1)
 				project_perspective(&c, f, WIDTH, HEIGHT, grid);
 			else if (grid->view_mode == 2)
 				project_isometric(&c, grid); 
-			draw_line(a, c, &img);
+			draw_line(a, c, grid->img);
 		}
 
 		i++;
 	}
 
-	mlx_put_image_to_window(grid->mlx, grid->win, img.img, 0, 0);
+	mlx_put_image_to_window(grid->mlx, grid->win, grid->img->img, 0, 0);
+	grid->flag = 1;
+	grid->selected_points[grid->s_point] -= 2;
 }
