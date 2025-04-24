@@ -35,11 +35,11 @@ void	parse_line(char *line, t_grid *grid, int *i)
 				num = num * 10 + *line - 48;
 				line++;
 			}
-			grid->values[*i] = num * sign;
+			grid->points[*i].z = num * sign;
 			if (*line == ',')
-				grid->colors[*i] = ft_htod(&line);
+				grid->points[*i].color = ft_htod(&line);
 			else
-				grid->colors[*i] = 16777215;
+				grid->points[*i].color = 16777215;
 			grid->selected_points[*i] = 0;
 			(*i)++;
 			width++;
@@ -78,10 +78,9 @@ int	create_grid(char *fname, t_grid *grid)
 	close(fd);
 	if (size < 1)
 		return (0);
-	grid->values = (int *)malloc(sizeof(int) * size);
-	grid->colors = (int *)malloc(sizeof(int) * size);
+	grid->points = (t_point *)malloc(sizeof(t_point) * size);
 	grid->selected_points = (int *)malloc(sizeof(int) * size);
-	if (!grid->values || !grid->colors)
+	if (!grid->points || !grid->selected_points)
 		return (error("Can't allocate memory\n", 0));
 	fd = open(fname, O_RDONLY);
 	parse_file(fd, grid);

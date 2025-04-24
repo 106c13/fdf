@@ -31,6 +31,14 @@ typedef struct	s_data {
 	int		endian;
 }				t_data;
 
+typedef struct s_point
+{
+	float	x;
+	float	y;
+	float	z;
+	int	color;
+} t_point;
+
 typedef struct s_grid
 {
 	void	*mlx;
@@ -41,27 +49,14 @@ typedef struct s_grid
 	int	x;
 	int	y;
 	int	z;
-	double	x_angle;
-	double	y_angle;
-	double	z_angle;	
-	int	*values;
-	int	*colors;
-	int	h_scale;
 	int	view_mode;
-	int	flag;
-	t_data	*img;
 	int	*selected_points;
 	int	s_point;
+	t_data	*img;
+	t_point	*points;
 } t_grid;
 
 
-typedef struct s_point
-{
-	int	x;
-	int	y;
-	int	z;
-	int	color;
-} t_point;
 
 // ft_splic.c
 char	**ft_split(char *str, char sep);
@@ -74,6 +69,10 @@ int	create_grid(char *fnamem, t_grid *grid);
 
 // map_renderer.c
 void	draw_map(t_grid *grid, int edit_mode);
+void	obj_init(t_grid *grid);
+void	rotate_x(t_grid *grid, float angle);
+void	rotate_y(t_grid *grid, float angle);
+void	rotate_z(t_grid *grid, float angle);
 
 // utils.c
 int	ft_htod(char **str);
