@@ -23,6 +23,44 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 	}
 }
 
+void draw_menu(t_grid *grid)
+{
+    int x;
+    int y;
+
+    for (y = 0; y < HEIGHT; y++)
+    {
+        for (x = 0; x < WIDTH/7; x++)
+        {
+            my_mlx_pixel_put(grid->img, x, y, 0x2f4b71);
+        }
+    }
+    mlx_string_put(grid->mlx, grid->win, 40, 20, 0xFFFFFF, "Menu");
+    mlx_string_put(grid->mlx, grid->win, 40, 60, 0xe5e5df, "X: Left/Right");
+    mlx_string_put(grid->mlx, grid->win, 40, 80, 0xe5e5df, "Y: Up/Down");
+    mlx_string_put(grid->mlx, grid->win, 40, 120, 0xe5e5df, "X angle: W S");
+    mlx_string_put(grid->mlx, grid->win, 40, 140, 0xe5e5df, "Y angle: Q E");
+    mlx_string_put(grid->mlx, grid->win, 40, 160, 0xe5e5df, "Z angle: A D");
+    mlx_string_put(grid->mlx, grid->win, 40, 200, 0xe5e5df, "Zoom in/out: Space/Tab");
+    mlx_string_put(grid->mlx, grid->win, 40, 240, 0xe5e5df, "Perspective: 1");
+    mlx_string_put(grid->mlx, grid->win, 40, 260, 0xe5e5df, "Isometric: 2");
+    mlx_string_put(grid->mlx, grid->win, 40, 320, 0xe5e5df, "Editor Mode");
+    mlx_string_put(grid->mlx, grid->win, 40, 340, 0xe5e5df, "Enter/Exit: V");
+    mlx_string_put(grid->mlx, grid->win, 40, 360, 0xe5e5df, "Select point: C");
+    mlx_string_put(grid->mlx, grid->win, 40, 380, 0xe5e5df, "Deselect point: C");
+    mlx_string_put(grid->mlx, grid->win, 40, 400, 0xe5e5df, "Deselect all: X");
+    mlx_string_put(grid->mlx, grid->win, 40, 420, 0xe5e5df, "Increase height: +");
+    mlx_string_put(grid->mlx, grid->win, 40, 440, 0xe5e5df, "Decrease height: -");
+    mlx_string_put(grid->mlx, grid->win, 40, 490, 0xe5e5df, "Move Left: J");
+    mlx_string_put(grid->mlx, grid->win, 40, 510, 0xe5e5df, "Move Right: L");
+    mlx_string_put(grid->mlx, grid->win, 40, 530, 0xe5e5df, "Move Up: I");
+    mlx_string_put(grid->mlx, grid->win, 40, 550, 0xe5e5df, "Move Down: K");
+}
+
+
+
+
+
 
 void	change_height(t_grid *grid, int value)
 {
@@ -53,7 +91,6 @@ int	event_handler(int keycode, t_grid *grid)
 {
 	static int edit_mode;
 
-	ft_printf("%d\n", keycode);
 	if (keycode == 65307)
 	{
 		mlx_destroy_window(grid->mlx, grid->win);
@@ -88,9 +125,19 @@ int	event_handler(int keycode, t_grid *grid)
 	else if (keycode == 45)
 		change_height(grid, -1);
 	else if (keycode == 49)
+	{
+		grid->x_angle = PI / 4;
+		grid->y_angle = 0;
+		grid->z_angle = PI;
 		grid->view_mode = 1;
+	}
 	else if (keycode == 50)
+	{
+		grid->x_angle = 0;
+		grid->y_angle = 0;
+		grid->z_angle = 0;
 		grid->view_mode = 2;
+	}
 	else if (keycode == 118)
 	{
 		edit_mode++;
@@ -125,13 +172,8 @@ int	event_handler(int keycode, t_grid *grid)
 	}
 	if (grid->z < 1)
 		grid->z = 1;
-	if (grid->flag)
-	{
-		grid->flag = 0;
-		draw_map(grid, edit_mode);
-	}
-	else
-		ft_printf("Busy\n");
+	draw_map(grid, edit_mode);
+	draw_menu(grid);
 	return (0);
 }
 
@@ -144,7 +186,6 @@ int	main(int argc, char **argv)
 	{
 		if (!create_grid(argv[1], &grid))
 			return (0);
-		ft_printf("W: %d H: %d\n", grid.width, grid.height);
 		grid.mlx = mlx_init();
 		grid.win = mlx_new_window(grid.mlx, WIDTH, HEIGHT, "Hello world!");
 		grid.x = 0;
@@ -159,6 +200,7 @@ int	main(int argc, char **argv)
 		grid.img = &img;
 		mlx_hook(grid.win, 2, 1L<<0, event_handler, &grid);
 		draw_map(&grid, 0);
+		draw_menu(&grid);
 		mlx_loop(grid.mlx);
 	}
 	return (0);

@@ -1,6 +1,4 @@
 #include "fdf.h"
-#include <stdio.h>
-
 
 int	gradient_change(int c1, int c2, float t)
 {
@@ -68,38 +66,45 @@ void rotate_point(t_point *p, t_grid *grid)
     float y = p->y;
     float z = p->z;
 
+    float x1 = x;
     float y1 = y * cos(grid->x_angle) - z * sin(grid->x_angle);
     float z1 = y * sin(grid->x_angle) + z * cos(grid->x_angle);
 
-    float x2 = x * cos(grid->y_angle) + z1 * sin(grid->y_angle);
-    float z2 = -x * sin(grid->y_angle) + z1 * cos(grid->y_angle);
+    // Rotate around Y
+    float x2 = x1 * cos(grid->y_angle) + z1 * sin(grid->y_angle);
+    float y2 = y1;
+    float z2 = -x1 * sin(grid->y_angle) + z1 * cos(grid->y_angle);
 
-    float x3 = x2 * cos(grid->z_angle) - y1 * sin(grid->z_angle);
-    float y3 = x2 * sin(grid->z_angle) + y1 * cos(grid->z_angle);
-
+    // Rotate around Z
+    float x3 = x2 * cos(grid->z_angle) - y2 * sin(grid->z_angle);
+    float y3 = x2 * sin(grid->z_angle) + y2 * cos(grid->z_angle);
+    float z3 = z2;
     p->x = x3;
     p->y = y3;
-    p->z = z2;
+    p->z = z3;
 }
 
-void project_perspective(t_point *p, float f, int screen_w, int screen_h, t_grid *grid)
+void	project_perspective(t_point *p, float f, int screen_w, int screen_h, t_grid *grid)
 {
-    float camera_z = -1000.0f; // step back
-    float relative_z = p->z - camera_z;
-    if (relative_z < 1.0f) relative_z = 1.0f;
+	float	camera_z;
+	float	relative_z;
 
-    p->x = (p->x * f) / relative_z + screen_w / 2 + grid->x;
-    p->y = (p->y * f) / relative_z + screen_h / 2 + grid->y;
+	camera_z = 500.0f;
+	relative_z = p->z - camera_z;
+	if (relative_z > -1.0f)
+		relative_z = -1.0f;
+	p->x = (p->x * f) / relative_z + screen_w / 2 + grid->x + 100;
+	p->y = (p->y * f) / relative_z + screen_h / 2 + grid->y;
 }
 
 void	project_isometric(t_point *p, t_grid *grid)
 {
 	int	x;
 	int	y;
-
+	
 	x = p->x - p->y + WIDTH / 2;
 	y = (p->x + p->y) / 2 - p->z + HEIGHT / 2;
-	p->x = x + grid->x;
+	p->x = x + grid->x + 100;
 	p->y = y + grid->y; 
 }
 
@@ -113,7 +118,7 @@ void    reset_img(t_data *img)
         {
                 x = 0;
                 while (x < WIDTH)
-			my_mlx_pixel_put(img, x++, y, 0);
+			my_mlx_pixel_put(img, x++, y, 0x222221);
 		y++;
         }
 }
@@ -145,10 +150,8 @@ void draw_map(t_grid *grid, int edit_mode)
 	{
 		gx = i % width;
 		gy = i / width;
-
-		// Point A
-		a.x = (gx - width / 2) * spacing;
-		a.y = (gy - height / 2) * spacing;
+		a.x = (gx - width / 2) * spacing * 2;
+		a.y = (gy - height / 2) * spacing * 2;
 		a.z = grid->values[i] * spacing;
 		if (edit_mode)
 			a.color = get_color(grid->selected_points[i]);
@@ -156,7 +159,6 @@ void draw_map(t_grid *grid, int edit_mode)
 			a.color = grid->colors[i];
 		if (grid->values[i] != 0)
 		    a.z += grid->h_scale;
-
 		rotate_point(&a, grid);
 			c.color = grid->colors[i + width];
 		if (grid->view_mode == 1)
@@ -166,8 +168,8 @@ void draw_map(t_grid *grid, int edit_mode)
 		if (gx < width - 1)
 		{
 			j = i + 1;
-			b.x = ((j % width) - width / 2) * spacing;
-			b.y = ((j / width) - height / 2) * spacing;
+			b.x = ((j % width) - width / 2) * spacing * 2;
+			b.y = ((j / width) - height / 2) * spacing * 2;
 			b.z = grid->values[j] * spacing;
 			if (edit_mode)
 				b.color = get_color(grid->selected_points[i + 1]);
@@ -185,8 +187,8 @@ void draw_map(t_grid *grid, int edit_mode)
 		if (gy < height - 1)
 		{
 			j = i + width;
-			c.x = ((j % width) - width / 2) * spacing;
-			c.y = ((j / width) - height / 2) * spacing;
+			c.x = ((j % width) - width / 2) * spacing * 2;
+			c.y = ((j / width) - height / 2) * spacing * 2;
 			c.z = grid->values[j] * spacing;
 			if (edit_mode)
 				c.color = get_color(grid->selected_points[i + width]);
@@ -201,11 +203,8 @@ void draw_map(t_grid *grid, int edit_mode)
 				project_isometric(&c, grid); 
 			draw_line(a, c, grid->img);
 		}
-
 		i++;
 	}
-
 	mlx_put_image_to_window(grid->mlx, grid->win, grid->img->img, 0, 0);
-	grid->flag = 1;
 	grid->selected_points[grid->s_point] -= 2;
 }

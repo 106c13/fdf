@@ -22,8 +22,6 @@
 # include <math.h>
 # include "get_next_line.h"
 #include "mlx/mlx.h"
-// TODO: remove this V
-#include "ft_printf.h"
 
 typedef struct	s_data {
 	void	*img;
