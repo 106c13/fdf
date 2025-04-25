@@ -74,7 +74,7 @@ int	ft_fill_list(char *str, char sep, char **list)
 
 void	ft_free_list(char **list)
 {
-	char **temp;
+	char	**temp;
 
 	temp = list;
 	while (*list)

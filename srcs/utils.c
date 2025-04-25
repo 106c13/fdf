@@ -12,6 +12,19 @@
 
 #include "fdf.h"
 
+int	ft_printf(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (*str)
+	{
+		i += write(1, str, 1);
+		str++;
+	}
+	return (i);
+}
+
 int	ft_htod(char **str)
 {
 	int	num;

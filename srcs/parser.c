@@ -46,7 +46,6 @@ void	parse_line(char *line, t_grid *grid, int *i)
 		if (*line != ' ')
 		{
 			grid->points[*i].z = ft_atoi(&line);
-			printf("%f\n", grid->points[*i].z);
 			if (*line == ',')
 				grid->points[*i].color = ft_htod(&line);
 			else
@@ -96,5 +95,10 @@ int	create_grid(char *fname, t_grid *grid)
 	fd = open(fname, O_RDONLY);
 	parse_file(fd, grid);
 	grid->size = size;
+	grid->x = 0;
+	grid->y = 0;
+	grid->zoom = 5;
+	grid->s_point = 0;
+	grid->view_mode = 2;
 	return (1);
 }

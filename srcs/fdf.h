@@ -16,8 +16,8 @@ typedef struct s_data
 {
 	void	*img;
 	char	*addr;
-	int		bits_per_pixel;
-	int		line_length;
+	int		b;
+	int		l;
 	int		endian;
 }	t_data;
 
@@ -69,6 +69,7 @@ void	draw_line(t_point p0, t_point p1, t_data *img);
 t_point	create_point(t_grid *grid, int i, int edit_mode);
 
 // utils.c
+int		ft_printf(char *str);
 int		ft_htod(char **str);
 int		get_color(int i);
 int		gradient_change(int c1, int c2, float t);
