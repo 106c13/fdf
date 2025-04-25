@@ -63,9 +63,9 @@ void	rotate_y(t_grid *grid, float angle);
 void	rotate_z(t_grid *grid, float angle);
 
 // grid.c
+void	unselect_all(t_grid *grid);
 void	draw_map(t_grid *grid, int edit_mode);
 void	obj_init(t_grid *grid);
-void	draw_line(t_point p0, t_point p1, t_data *img);
 t_point	create_point(t_grid *grid, int i, int edit_mode);
 
 // utils.c
@@ -82,5 +82,10 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
 // error_handlers.c
 void	*error_ptr(char *msg, void *ptr);
 int		error(char *msg, int error_code);
+
+// window.c
+void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
+void	draw_menu(t_grid *grid);
+void	change_height(t_grid *grid, int value);
 
 #endif

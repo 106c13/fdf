@@ -2,9 +2,9 @@
 
 void	draw_line(t_point p0, t_point p1, t_data *img)
 {
-	int dx;
-	int dy;
-	int err;
+	int		dx;
+	int		dy;
+	int		err;
 	float	i;
 	float	n;
 
@@ -15,7 +15,7 @@ void	draw_line(t_point p0, t_point p1, t_data *img)
 	n = abs(p1.x - p0.x);
 	if (n < abs(p1.y - p0.y))
 		n = abs(p1.y - p0.y);
-	while (abs(p0.x - p1.x) > 1 || abs(p0.y - p1.y) > 1)
+	while (abs(p0.x - p1.x) > 0 || abs(p0.y - p1.y) > 0)
 	{
 		my_mlx_pixel_put(img, p0.x, p0.y, gradient_change(p0.color, p1.color, i / n));
 		if (err > -dy)
@@ -71,7 +71,6 @@ void	obj_init(t_grid *grid)
 	{
 		grid->points[i].x = (i % width - width / 2) * scale;
 		grid->points[i].y = (i / width - height / 2) * scale;
-		grid->points[i].z *= scale;
 		i++; 
 	}
 }
@@ -96,9 +95,20 @@ void draw_map(t_grid *grid, int edit_mode)
 			b = create_point(grid, i + grid->width, edit_mode);
 			draw_line(a, b, grid->img);
 		}
-		my_mlx_pixel_put(grid->img, a.x, a.y, a.color); 
 		i++;
 	}
 	mlx_put_image_to_window(grid->mlx, grid->win, grid->img->img, 0, 0);
 	grid->selected_points[grid->s_point] -= 2;
+}
+
+void	unselect_all(t_grid *grid)
+{
+	int	i;
+
+	i = 0;
+	while (i < grid->size)
+	{
+		grid->selected_points[i] = 0;
+		i++;
+	}
 }

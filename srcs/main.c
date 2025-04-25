@@ -12,85 +12,6 @@
 
 #include "fdf.h"
 
-void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
-{
-	char	*dst;
-
-	if (x < WIDTH && x >= 0 && y < HEIGHT && y >= 0)
-	{
-		dst = data->addr + (y * data->l + x * (data->b / 8));
-		*(int *)dst = color;
-	}
-}
-
-void	draw_background(t_data *img)
-{
-	int	x;
-	int	y;
-
-	y = 0;
-	while (y < HEIGHT)
-	{
-		x = 0;
-		while (x < WIDTH / 7)
-		{
-			my_mlx_pixel_put(img, x, y, 0x2f4b71);
-			x++;
-		}
-		y++;
-	}
-}
-
-void	draw_menu(t_grid *grid)
-{
-	draw_background(grid->img);
-	mlx_string_put(grid->mlx, grid->win, 40, 20, 0xFFFFFF, "Menu");
-	mlx_string_put(grid->mlx, grid->win, 40, 60, 0xe5e5df, "X: Left/Right");
-	mlx_string_put(grid->mlx, grid->win, 40, 80, 0xe5e5df, "Y: Up/Down");
-	mlx_string_put(grid->mlx, grid->win, 40, 120, 0xe5e5df, "X angle: W S");
-	mlx_string_put(grid->mlx, grid->win, 40, 140, 0xe5e5df, "Y angle: Q E");
-	mlx_string_put(grid->mlx, grid->win, 40, 160, 0xe5e5df, "Z angle: A D");
-	mlx_string_put(grid->mlx, grid->win, 40, 200, 0xe5e5df, "Zoom in/out: Space/Tab");
-	mlx_string_put(grid->mlx, grid->win, 40, 240, 0xe5e5df, "Perspective: 1");
-	mlx_string_put(grid->mlx, grid->win, 40, 260, 0xe5e5df, "Isometric: 2");
-	mlx_string_put(grid->mlx, grid->win, 40, 320, 0xe5e5df, "Editor Mode");
-	mlx_string_put(grid->mlx, grid->win, 40, 340, 0xe5e5df, "Enter/Exit: V");
-	mlx_string_put(grid->mlx, grid->win, 40, 360, 0xe5e5df, "Select point: C");
-	mlx_string_put(grid->mlx, grid->win, 40, 380, 0xe5e5df, "Deselect point: C");
-	mlx_string_put(grid->mlx, grid->win, 40, 400, 0xe5e5df, "Deselect all: X");
-	mlx_string_put(grid->mlx, grid->win, 40, 420, 0xe5e5df, "Increase height: +");
-	mlx_string_put(grid->mlx, grid->win, 40, 440, 0xe5e5df, "Decrease height: -");
-	mlx_string_put(grid->mlx, grid->win, 40, 490, 0xe5e5df, "Move Left: J");
-	mlx_string_put(grid->mlx, grid->win, 40, 510, 0xe5e5df, "Move Right: L");
-	mlx_string_put(grid->mlx, grid->win, 40, 530, 0xe5e5df, "Move Up: I");
-	mlx_string_put(grid->mlx, grid->win, 40, 550, 0xe5e5df, "Move Down: K");
-}
-
-void	change_height(t_grid *grid, int value)
-{
-	int	i;
-
-	i = 0;
-	while (i < grid->size)
-	{
-		if (grid->selected_points[i] != 0)
-			grid->points[i].z += value;
-		i++;
-	}
-}
-
-void	unselect_all(t_grid *grid)
-{
-	int	i;
-
-	i = 0;
-	while (i < grid->size)
-	{
-		grid->selected_points[i] = 0;
-		i++;
-	}
-}
-
 void	rotation_handler(int keycode, t_grid *grid, int edit_mode)
 {
 	if (keycode == 97)
@@ -110,9 +31,9 @@ void	rotation_handler(int keycode, t_grid *grid, int edit_mode)
 void	grid_setting_handler(int keycode, t_grid *grid)
 {
 	if (keycode == 32)
-		grid->zoom += 0.4;
+		grid->zoom += 0.1;
 	else if (keycode == 65289)
-		grid->zoom -= 0.4;
+		grid->zoom -= 0.1;
 	else if (keycode == 65363)
 		grid->x += 8;
 	else if (keycode == 65361)

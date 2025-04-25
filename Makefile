@@ -13,7 +13,7 @@ LFLAGS = -Lmlx -lmlx -L$(INCLIB) -lXext -lX11 -lm
 
 # Source files
 SRC = srcs/get_next_line.c srcs/get_next_line_utils.c \
-      srcs/ft_split.c \
+      srcs/ft_split.c srcs/window.c \
       srcs/validator.c srcs/error_handlers.c srcs/utils.c srcs/parser.c srcs/grid.c srcs/view.c \
       srcs/main.c
 
