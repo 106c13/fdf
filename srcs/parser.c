@@ -12,6 +12,26 @@
 
 #include "fdf.h"
 
+int	ft_atoi(char **str)
+{
+	int	num;
+	int	sign;
+
+	sign = 1;
+	num = 0;
+	if (**str == '-')
+	{
+		sign = -1;
+		(*str)++;
+	}
+	while (**str >= '0' && **str <= '9')
+	{
+		num = num * 10 + **str - 48;
+		(*str)++;
+	}
+	return (num * sign);
+}
+
 void	parse_line(char *line, t_grid *grid, int *i)
 {
 	int	num;
@@ -25,17 +45,8 @@ void	parse_line(char *line, t_grid *grid, int *i)
 		sign = 1;
 		if (*line != ' ')
 		{
-			if (*line == '-')
-			{
-				sign = -1;
-				line++;
-			}
-			while (*line >= '0' && *line <= '9')
-			{
-				num = num * 10 + *line - 48;
-				line++;
-			}
-			grid->points[*i].z = num * sign;
+			grid->points[*i].z = ft_atoi(&line);
+			printf("%f\n", grid->points[*i].z);
 			if (*line == ',')
 				grid->points[*i].color = ft_htod(&line);
 			else
@@ -52,8 +63,8 @@ void	parse_line(char *line, t_grid *grid, int *i)
 void	parse_file(int fd, t_grid *grid)
 {
 	char	*line;
-	int	height;
-	int	i;
+	int		height;
+	int		i;
 
 	line = get_next_line(fd);
 	height = 0;

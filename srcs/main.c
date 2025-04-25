@@ -61,7 +61,7 @@ void draw_menu(t_grid *grid)
 
 
 
-/*
+
 void	change_height(t_grid *grid, int value)
 {
 	int	i;
@@ -70,11 +70,11 @@ void	change_height(t_grid *grid, int value)
 	while (i < grid->size)
 	{
 		if (grid->selected_points[i] != 0)
-			grid->values[i] += value;
+			grid->points[i].z += value;
 		i++;
 	}
 }
-*/
+
 void	unselect_all(t_grid *grid)
 {
 	int	i;
@@ -90,7 +90,6 @@ void	unselect_all(t_grid *grid)
 int	event_handler(int keycode, t_grid *grid)
 {
 	static int edit_mode;
-	printf("%d\n", keycode);
 	if (keycode == 65307)
 	{
 		mlx_destroy_window(grid->mlx, grid->win);
@@ -109,9 +108,9 @@ int	event_handler(int keycode, t_grid *grid)
 	else if (keycode == 101)
 		rotate_y(grid, 0.1);
 	else if (keycode == 32)
-		grid->z += 1;
+		grid->zoom += 0.4;
 	else if (keycode == 65289)
-		grid->z -= 1;
+		grid->zoom -= 0.4;
 	else if (keycode == 65363)
 		grid->x += 8;
 	else if (keycode == 65361)
@@ -120,24 +119,14 @@ int	event_handler(int keycode, t_grid *grid)
 		grid->y += 8;
 	else if (keycode == 65362)
 		grid->y -= 8;
-	//else if (keycode == 61)
-		//change_height(grid, 1);
-	//else if (keycode == 45)
-		//change_height(grid, -1);
+	else if (keycode == 61)
+		change_height(grid, 1);
+	else if (keycode == 45)
+		change_height(grid, -1);
 	else if (keycode == 49)
-	{
-		//grid->x_angle = PI / 4;
-		//grid->y_angle = 0;
-		//grid->z_angle = PI;
 		grid->view_mode = 1;
-	}
 	else if (keycode == 50)
-	{
-		//grid->x_angle = 0;
-		//grid->y_angle = 0;
-		//grid->z_angle = 0;
 		grid->view_mode = 2;
-	}
 	else if (keycode == 118)
 	{
 		edit_mode++;
@@ -170,8 +159,8 @@ int	event_handler(int keycode, t_grid *grid)
 		if (grid->s_point != grid->size - 1)
 			grid->s_point += 1;
 	}
-	//if (grid->z < 1)
-	//	grid->z = 1;
+	if (grid->zoom < 0.1)
+		grid->zoom = 0.1;
 	draw_map(grid, edit_mode);
 	draw_menu(grid);
 	return (0);
@@ -190,7 +179,7 @@ int	main(int argc, char **argv)
 		grid.win = mlx_new_window(grid.mlx, WIDTH, HEIGHT, "Hello world!");
 		grid.x = 0;
 		grid.y = 0;
-		grid.z = 15;
+		grid.zoom = 5;
 		grid.view_mode = 2;
 		grid.s_point = 0;
 		img.img = mlx_new_image(grid.mlx, WIDTH, HEIGHT);
@@ -202,5 +191,7 @@ int	main(int argc, char **argv)
 		draw_menu(&grid);
 		mlx_loop(grid.mlx);
 	}
+	else
+		write("Usage: ./fdf <map>\n");
 	return (0);
 }
