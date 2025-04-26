@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   view.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/26 13:00:31 by haaghaja          #+#    #+#             */
+/*   Updated: 2025/04/26 19:29:01 by haaghaja         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fdf.h"
 
 void	rotate_x(t_grid *grid, float angle)
@@ -60,7 +72,7 @@ void	project_perspective(t_point *p, float f, t_grid *grid)
 	relative_z = p->z - camera_z;
 	if (relative_z > -1.0f)
 		relative_z = -1.0f;
-	p->x = (p->x * f) / relative_z + WIDTH / 2 + grid->x + 100;
+	p->x = (p->x * f) / relative_z + WIDTH / 2 + grid->x + 150;
 	p->y = (p->y * f) / relative_z + HEIGHT / 2 + grid->y;
 }
 
@@ -71,6 +83,6 @@ void	project_isometric(t_point *p, t_grid *grid)
 
 	x = p->x - p->y + WIDTH / 2;
 	y = (p->x + p->y) / 2 - p->z + HEIGHT / 2;
-	p->x = x + grid->x + 100;
+	p->x = x + grid->x + 150;
 	p->y = y + grid->y;
 }

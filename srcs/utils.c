@@ -6,7 +6,7 @@
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 14:35:56 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/12 14:59:21 by haaghaja         ###   ########.fr       */
+/*   Updated: 2025/04/26 18:08:55 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,10 @@ int	get_color(int i)
 		return (0xff7000);
 	if (i == 1)
 		return (0xff0000);
-	if (i == 0)
-		return (0xffffff);
+	return (0xffffff);
 }
 
-int	gradient_change(int c1, int c2, float t)
+int	gradient(int c1, int c2, float t)
 {
 	int	r;
 	int	g;

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   fdf.h                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/26 13:00:45 by haaghaja          #+#    #+#             */
+/*   Updated: 2025/04/26 18:57:29 by haaghaja         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef FDF_H
 # define FDF_H
 
@@ -44,7 +56,17 @@ typedef struct s_grid
 	int		s_point;
 	t_data	*img;
 	t_point	*points;
+	t_point	*o_points;
 }	t_grid;
+
+typedef struct s_rect
+{
+	int	x;
+	int	y;
+	int	w;
+	int	h;
+	int	color;
+}	t_rect;
 
 // ft_splic.c
 char	**ft_split(char *str, char sep);
@@ -69,15 +91,21 @@ void	obj_init(t_grid *grid);
 t_point	create_point(t_grid *grid, int i, int edit_mode);
 
 // utils.c
+void	reset_img(t_data *img);
 int		ft_printf(char *str);
 int		ft_htod(char **str);
 int		get_color(int i);
-int		gradient_change(int c1, int c2, float t);
-void	reset_img(t_data *img);
+int		gradient(int c1, int c2, float t);
+
+void	obj_reset(t_grid *grid);
+void	obj_init(t_grid *grid);
+void	obj_reset(t_grid *grid);
+void	unselect_all(t_grid *grid);
+t_point	create_point(t_grid *grid, int i, int edit_mode);
 
 // main.c
 int		error(char *str, int out);
-void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
+int		fdf_exit(void *param);
 
 // error_handlers.c
 void	*error_ptr(char *msg, void *ptr);
@@ -87,5 +115,14 @@ int		error(char *msg, int error_code);
 void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
 void	draw_menu(t_grid *grid);
 void	change_height(t_grid *grid, int value);
+
+// fdf_draw.c
+void	draw_fdf(t_data *img);
+
+// handler.c
+void	editor_handler(int keycode, t_grid *grid);
+void	grid_setting_handler(int keycode, t_grid *grid);
+void	rotation_handler(int keycode, t_grid *grid, int edit_mode);
+int		event_handler(int keycode, t_grid *grid);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:52:06 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/12 14:52:08 by haaghaja         ###   ########.fr       */
+/*   Updated: 2025/04/26 19:19:09 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,19 +103,17 @@ int	get_grid_size(int fd)
 	int		width;
 	char	*line;
 
-	if (read(fd, 0, 0) == -1)
-		return (error("File not exists\n", -1));
 	size = 0;
 	width = 0;
 	line = get_next_line(fd);
 	while (line)
 	{
-		if (size == 0)
-			width = count_words(line);
-		else if (width != count_words(line))
-			return (error("W doesn't match\n", -1));
-		if (width <= 0)
-			return (error("File is invalid\n", -1));
+		width = count_words(line);
+		if (width < 0 || size % width != 0)
+		{
+			free(line);
+			return (-1);
+		}
 		size += width;
 		free(line);
 		line = get_next_line(fd);
