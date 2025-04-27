@@ -6,7 +6,7 @@
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:52:06 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/26 19:19:09 by haaghaja         ###   ########.fr       */
+/*   Updated: 2025/04/27 15:10:16 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,8 @@ int	count_words(char *str)
 		first = 0;
 		str++;
 	}
+	if (first)
+		return (-1);
 	return (count);
 }
 

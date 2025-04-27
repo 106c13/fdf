@@ -6,7 +6,7 @@
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 13:48:20 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/26 19:05:43 by haaghaja         ###   ########.fr       */
+/*   Updated: 2025/04/27 15:48:16 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,9 @@ void	obj_init(t_grid *grid)
 		grid->o_points[i].y = (i / width - height / 2) * scale;
 		grid->points[i].x = grid->o_points[i].x;
 		grid->points[i].y = grid->o_points[i].y;
-		grid->points[i].z = grid->o_points[i].z;
 		if (grid->size < 1000)
-			grid->points[i].z *= scale;
+			grid->o_points[i].z *= scale;
+		grid->points[i].z = grid->o_points[i].z;
 		grid->points[i].color = grid->o_points[i].color;
 		i++;
 	}
