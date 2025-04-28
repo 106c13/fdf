@@ -6,7 +6,7 @@
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:52:06 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/27 15:10:16 by haaghaja         ###   ########.fr       */
+/*   Updated: 2025/04/28 13:56:49 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,26 +50,7 @@ int	is_color(char **str)
 
 int	is_valid(char **str)
 {
-	long	num;
-	int		sign;
-
-	sign = 1;
-	if (**str == '-')
-	{
-		sign = -1;
-		(*str)++;
-	}
-	if (!is_valid_symbol(**str, "0123456789"))
-		return (0);
-	num = 0;
-	while (**str && **str != ',' && **str != '\n' && **str != ' ')
-	{
-		if (!is_valid_symbol(**str, "0123456789"))
-			return (0);
-		num = num * 10 + (**str - '0');
-		(*str)++;
-	}
-	if (sign * num > INT_MAX || sign * num < INT_MIN)
+	if (!is_int(str))
 		return (0);
 	if (**str == ',')
 		return (is_color(str));
@@ -94,7 +75,7 @@ int	count_words(char *str)
 		first = 0;
 		str++;
 	}
-	if (first)
+	if (first == 1)
 		return (-1);
 	return (count);
 }
@@ -111,7 +92,7 @@ int	get_grid_size(int fd)
 	while (line)
 	{
 		width = count_words(line);
-		if (width < 0 || size % width != 0)
+		if (width <= 0 || size % width != 0)
 		{
 			free(line);
 			return (-1);

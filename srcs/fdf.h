@@ -6,7 +6,7 @@
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 13:00:45 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/27 13:55:29 by haaghaja         ###   ########.fr       */
+/*   Updated: 2025/04/28 13:00:16 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ char	**ft_split(char *str, char sep);
 
 // validator.c
 int		get_grid_size(int fd);
+int		is_valid_symbol(char c, char *s);
 
 // parser.c
 int		create_grid(char *fnamem, t_grid *grid);
@@ -102,6 +103,9 @@ void	obj_init(t_grid *grid);
 void	obj_reset(t_grid *grid);
 void	unselect_all(t_grid *grid);
 t_point	create_point(t_grid *grid, int i, int edit_mode);
+
+int		is_int(char **str);
+int		get_sign(char **str);
 
 // main.c
 int		error(char *str, int out);

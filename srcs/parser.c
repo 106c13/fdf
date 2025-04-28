@@ -6,7 +6,7 @@
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:53:22 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/26 17:38:46 by haaghaja         ###   ########.fr       */
+/*   Updated: 2025/04/28 12:48:20 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,8 @@ int	ft_atoi(char **str)
 	int	num;
 	int	sign;
 
-	sign = 1;
 	num = 0;
-	if (**str == '-')
-	{
-		sign = -1;
-		(*str)++;
-	}
+	sign = get_sign(str);
 	while (**str >= '0' && **str <= '9')
 	{
 		num = num * 10 + **str - 48;
@@ -34,15 +29,11 @@ int	ft_atoi(char **str)
 
 void	parse_line(char *line, t_grid *grid, int *i)
 {
-	int	num;
-	int	sign;
 	int	width;
 
 	width = 0;
 	while (*line && *line != '\n')
 	{
-		num = 0;
-		sign = 1;
 		if (*line != ' ')
 		{
 			grid->o_points[*i].z = ft_atoi(&line);

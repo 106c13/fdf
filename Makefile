@@ -12,7 +12,7 @@ CFLAGS = -I$(INC) -Imlx -O3 -g -Wall -Wextra -Werror
 LFLAGS = -Lmlx -lmlx -L$(INCLIB) -lXext -lX11 -lm
 
 SRC    = srcs/get_next_line.c srcs/get_next_line_utils.c \
-         srcs/window.c srcs/utils2.c srcs/fdf_draw.c srcs/handlers.c \
+         srcs/window.c srcs/utils2.c srcs/fdf_draw.c srcs/handlers.c srcs/utils3.c \
          srcs/validator.c srcs/error_handlers.c srcs/utils.c srcs/parser.c srcs/grid.c srcs/view.c \
          srcs/main.c
 
