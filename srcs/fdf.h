@@ -6,7 +6,7 @@
 /*   By: haaghaja <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 13:00:45 by haaghaja          #+#    #+#             */
-/*   Updated: 2025/04/28 13:00:16 by haaghaja         ###   ########.fr       */
+/*   Updated: 2025/04/29 13:55:56 by haaghaja         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,17 @@
 # define PI 3.14
 # define WIDTH 1500
 # define HEIGHT 1000
+
+# define X_MIN 0
+# define Y_MIN 0
+# define X_MAX WIDTH
+# define Y_MAX HEIGHT
+
+# define INSIDE 0
+# define LEFT   1
+# define RIGHT  2
+# define BOTTOM 4
+# define TOP    8
 
 # include <stdlib.h>
 # include <fcntl.h>
