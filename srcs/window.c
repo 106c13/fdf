@@ -16,11 +16,8 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
 	char	*dst;
 
-	if (x < WIDTH && x >= 0 && y < HEIGHT && y >= 0)
-	{
-		dst = data->addr + (y * data->l + x * (data->b / 8));
-		*(int *)dst = color;
-	}
+	dst = data->addr + (y * data->l + x * (data->b / 8));
+	*(int *)dst = color;
 }
 
 void	draw_background(t_data *img)

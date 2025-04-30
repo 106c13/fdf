@@ -66,6 +66,8 @@ void	cohen_sutherland_clip(t_point *p0, t_point *p1)
 	outcode0 = compute_outcode(*p0);
 	outcode1 = compute_outcode(*p1);
 	accept = 0;
+	x = 0;
+	y = 0;
 	while (1) {
 		if ((outcode0 == INSIDE) && (outcode1 == INSIDE)) {
 			accept = 1;
@@ -123,10 +125,11 @@ void	draw_line(t_point p0, t_point p1, t_data *img)
 	n = dx;
 	if (dx < dy)
 		n = dy;
-	while (ft_abs(p0.x - p1.x) > 1 || ft_abs(p0.y - p1.y) > 1)
+	if (dx == 0 && dy == 0)
+		my_mlx_pixel_put(img, p0.x, p0.y, p0.color);
+	while (ft_abs(p0.x - p1.x) > 0 || ft_abs(p0.y - p1.y) > 1)
 	{
-		my_mlx_pixel_put(img, p0.x, p0.y,
-			gradient(p0.color, p1.color, i / n));
+		my_mlx_pixel_put(img, p0.x, p0.y, gradient(p0.color, p1.color, i / n));
 		if (err > -dy)
 			err -= update_points(&p0, &p1, dy, 'x');
 		if (err < dx)
@@ -157,7 +160,6 @@ void	draw_map(t_grid *grid, int edit_mode)
 			b = create_point(grid, i + grid->width, edit_mode);
 			draw_line(a, b, grid->img);
 		}
-		my_mlx_pixel_put(grid->img, a.x, a.y, a.color);
 		i++;
 	}
 	mlx_put_image_to_window(grid->mlx, grid->win, grid->img->img, 0, 0);
